@@ -1,0 +1,6 @@
+{
+  "name": "Nexora Crypto - Cryptocurrency Management Platform",
+  "description": "Professional cryptocurrency portfolio management and trading simulator with live simulated market tracking, swap engine, and asset analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
