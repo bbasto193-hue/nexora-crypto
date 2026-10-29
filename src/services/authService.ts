@@ -2,11 +2,16 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
+  username?: string;
+  country?: string;
+  nationality?: string;
+  phone?: string;
+  profilePictureDataUrl?: string;
   passwordHash: string;
   salt: string;
   createdAt: string;
   lastLogin: string;
-  role: 'Institutional Trader' | 'Demo Analyst';
+  role: 'Personal Account' | 'Institutional Trader' | 'Demo Analyst';
 }
 
 export interface PasswordResetRequest {
@@ -34,62 +39,8 @@ export function generateSalt(length = 16): string {
   return Array.from(array, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-import { DEMO_AUTH_CONFIG } from './demoAuthConfig';
-
-// Default Seed Demo Account
-const SEED_SALT = 'e48a1c90f23b7e61';
-let seedUserInitialized = false;
-
 export async function initAuthDatabase(): Promise<void> {
-  if (seedUserInitialized) return;
-  seedUserInitialized = true;
-
-  try {
-    const users = getAllUsers();
-
-    // Securely hash requested demo password with unique cryptographic salt
-    const velqorinHash = await hashPassword(
-      DEMO_AUTH_CONFIG.demoPassword,
-      DEMO_AUTH_CONFIG.seedSalt
-    );
-    const existingVelqorin = users.find((u) => u.email === DEMO_AUTH_CONFIG.email);
-
-    if (!existingVelqorin) {
-      users.push({
-        id: 'usr_demo_velqorin73',
-        email: DEMO_AUTH_CONFIG.email,
-        name: DEMO_AUTH_CONFIG.name,
-        passwordHash: velqorinHash,
-        salt: DEMO_AUTH_CONFIG.seedSalt,
-        createdAt: new Date().toISOString(),
-        lastLogin: new Date().toISOString(),
-        role: DEMO_AUTH_CONFIG.role
-      });
-    } else {
-      // Ensure hash and salt match the configured demo credentials
-      existingVelqorin.passwordHash = velqorinHash;
-      existingVelqorin.salt = DEMO_AUTH_CONFIG.seedSalt;
-    }
-
-    // Secondary demo trader
-    if (!users.some((u) => u.email === 'demo@nexora.io')) {
-      const demoHash = await hashPassword('NexoraPass2026!', SEED_SALT);
-      users.push({
-        id: 'usr_demo_institutional_1',
-        email: 'demo@nexora.io',
-        name: 'Institutional Demo Trader',
-        passwordHash: demoHash,
-        salt: SEED_SALT,
-        createdAt: new Date().toISOString(),
-        lastLogin: new Date().toISOString(),
-        role: 'Institutional Trader'
-      });
-    }
-
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-  } catch (err) {
-    console.error('Failed to init auth database:', err);
-  }
+  // Accounts are created explicitly through registration; do not seed fake users.
 }
 
 export function getAllUsers(): AuthUser[] {
@@ -99,6 +50,67 @@ export function getAllUsers(): AuthUser[] {
   } catch {
     return [];
   }
+}
+
+export interface AuthProfileChanges {
+  name: string;
+  email: string;
+  username?: string;
+  country?: string;
+  nationality?: string;
+  phone?: string;
+  profilePictureDataUrl?: string | null;
+}
+
+export function updateUserProfile(userId: string, changes: AuthProfileChanges): AuthUser | null {
+  const users = getAllUsers();
+  const userIndex = users.findIndex((user) => user.id === userId);
+  const cleanName = changes.name.trim();
+  const cleanEmail = changes.email.trim().toLowerCase();
+
+  if (
+    userIndex === -1 ||
+    !cleanName ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail) ||
+    users.some((user) => user.id !== userId && user.email.toLowerCase() === cleanEmail)
+  ) {
+    return null;
+  }
+
+  const updatedUser: AuthUser = { ...users[userIndex], name: cleanName, email: cleanEmail };
+  if (changes.username !== undefined) {
+    const username = changes.username.trim();
+    if (username) updatedUser.username = username;
+    else delete updatedUser.username;
+  }
+  for (const field of ['country', 'nationality', 'phone'] as const) {
+    if (changes[field] !== undefined) {
+      const value = changes[field]!.trim();
+      if (value) updatedUser[field] = value;
+      else delete updatedUser[field];
+    }
+  }
+  if (changes.profilePictureDataUrl !== undefined) {
+    if (changes.profilePictureDataUrl) updatedUser.profilePictureDataUrl = changes.profilePictureDataUrl;
+    else delete updatedUser.profilePictureDataUrl;
+  }
+
+  users[userIndex] = updatedUser;
+  try {
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    for (const storage of [sessionStorage, localStorage]) {
+      const rawSession = storage.getItem(SESSION_STORAGE_KEY);
+      if (!rawSession) continue;
+      const session = JSON.parse(rawSession);
+      if (session.userId === userId) {
+        storage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ ...session, name: cleanName, email: cleanEmail }));
+      }
+    }
+  } catch {
+    return null;
+  }
+
+  return updatedUser;
 }
 
 export async function registerUser({
@@ -115,6 +127,10 @@ export async function registerUser({
   const cleanEmail = email.trim().toLowerCase();
   const users = getAllUsers();
 
+  if (users.length > 0) {
+    return { success: false, error: 'This personal installation already has an account. Please sign in instead.' };
+  }
+
   if (users.some((u) => u.email === cleanEmail)) {
     return { success: false, error: 'An account with this email address already exists.' };
   }
@@ -130,7 +146,7 @@ export async function registerUser({
     salt,
     createdAt: new Date().toISOString(),
     lastLogin: new Date().toISOString(),
-    role: 'Institutional Trader'
+    role: 'Personal Account'
   };
 
   users.push(newUser);

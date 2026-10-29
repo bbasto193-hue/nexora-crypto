@@ -101,9 +101,9 @@ export const SwapPage: React.FC = () => {
             <Zap className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-white">Nexora DEX Swap Simulator</h2>
+            <h2 className="text-sm font-bold text-white">NEXORA Token Swap</h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              Simulated automated market maker (AMM) with zero slippage impact
+              Review a modeled exchange rate and fee estimate
             </p>
           </div>
         </div>
@@ -147,7 +147,7 @@ export const SwapPage: React.FC = () => {
         {/* FROM Token Card */}
         <div className="p-4 rounded-xl bg-[#0a0e17] border border-white/5 space-y-2">
           <div className="flex items-center justify-between text-xs font-mono text-slate-400">
-            <span>You Pay (Simulated)</span>
+            <span>You Pay (Practice)</span>
             <div className="flex items-center gap-1.5">
               <span>Balance: {availableFrom} {fromAsset.symbol}</span>
               <button
@@ -257,14 +257,14 @@ export const SwapPage: React.FC = () => {
           </div>
           <div className="flex justify-between text-slate-400">
             <span>Routing Protocol:</span>
-            <span className="text-cyan-400">Nexora Simulated Smart Liquidity</span>
+            <span className="text-cyan-400">NEXORA modeled route</span>
           </div>
           <div className="flex justify-between text-slate-400">
-            <span>Simulated DEX Fee (0.2%):</span>
+            <span>Estimated practice fee (0.2%):</span>
             <span className="text-slate-300">${feeUSD.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-slate-400">
-            <span>Slippage Guarantee:</span>
+            <span>Slippage Limit:</span>
             <span className="text-emerald-400">Max {slippage}%</span>
           </div>
         </div>
@@ -282,7 +282,7 @@ export const SwapPage: React.FC = () => {
           type="submit"
           className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-950/40"
         >
-          Review Simulated Swap
+          Review Practice Swap
         </button>
       </form>
 
@@ -295,8 +295,8 @@ export const SwapPage: React.FC = () => {
                 <ArrowDownUp className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-white">Confirm Simulated Swap</h3>
-                <p className="text-xs text-slate-400">Review atomic balance change in sandbox</p>
+                <h3 className="font-bold text-base text-white">Confirm Practice Swap</h3>
+                <p className="text-xs text-slate-400">Review the changes to your practice balances</p>
               </div>
             </div>
 
@@ -318,13 +318,13 @@ export const SwapPage: React.FC = () => {
                 <span className="text-white">1 {fromAsset.symbol} = {exchangeRate.toFixed(4)} {toAsset.symbol}</span>
               </div>
               <div className="flex justify-between text-slate-300">
-                <span>Simulated Network Fee:</span>
+                <span>Modeled Network Fee:</span>
                 <span className="text-slate-400">${feeUSD.toFixed(2)}</span>
               </div>
             </div>
 
             <div className="text-[11px] text-slate-400">
-              Your simulated balances for both {fromAsset.symbol} and {toAsset.symbol} will update immediately.
+              Only your locally stored practice balances will change. No assets are sent or received and no network transaction is submitted.
             </div>
 
             <div className="flex gap-3 pt-2">

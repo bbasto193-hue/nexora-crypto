@@ -131,8 +131,29 @@
 .landing-plan-detail strong { margin-left: auto; color: #dbe8f6; font-size: 10px; text-align: right; }
 .landing-plan-select { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 18px; color: #65d8ee; font-size: 10px; font-weight: 700; }
 .landing-plan-select svg { width: 14px; height: 14px; }
-.landing-demo-disclaimer { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 22px 0 0; color: #73869d; font-size: 10px; text-align: center; }
-.landing-demo-disclaimer svg { width: 14px; height: 14px; flex: 0 0 auto; color: #55b4d0; }
+.landing-plan-disclaimer { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 22px 0 0; color: #73869d; font-size: 10px; text-align: center; }
+.landing-plan-disclaimer svg { width: 14px; height: 14px; flex: 0 0 auto; color: #55b4d0; }
+.landing-payment { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1fr); align-items: center; gap: clamp(30px, 6vw, 82px); border-top: 1px solid rgba(141, 176, 213, .07); background: linear-gradient(115deg, #08111e, #07101c 58%, #081523); }
+.landing-payment-copy { max-width: 470px; }
+.landing-payment h2 { margin: 13px 0 0; color: #f2f7ff; font: 700 clamp(32px, 4vw, 44px)/1.15 Manrope, sans-serif; letter-spacing: -.055em; }
+.landing-payment-copy > p { margin: 14px 0 0; color: var(--landing-muted); font-size: 13px; line-height: 1.8; }
+.landing-payment-note { display: flex; align-items: flex-start; gap: 10px; margin-top: 22px; padding: 14px; border: 1px solid rgba(72, 216, 246, .14); border-radius: 12px; background: rgba(37, 143, 184, .07); }
+.landing-payment-note svg { width: 17px; height: 17px; flex: 0 0 auto; margin-top: 1px; color: #59d5c1; }
+.landing-payment-note p { margin: 0; color: #a7b9cd; font-size: 11px; line-height: 1.75; }
+.landing-payment-contact { margin-top: 20px; }
+.landing-payment-panel { min-width: 0; padding: clamp(17px, 2.5vw, 28px); border: 1px solid rgba(64, 176, 222, .19); border-radius: 17px; background: linear-gradient(145deg, rgba(13, 27, 47, .92), rgba(7, 17, 31, .98)); box-shadow: 0 22px 62px rgba(0, 0, 0, .23); }
+.landing-payment-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+.landing-payment-overline { color: #6bbcd4; font-size: 8px; font-weight: 800; letter-spacing: .16em; }
+.landing-payment-panel-heading h3 { margin: 5px 0 0; color: #e6f1fc; font: 700 14px Manrope, sans-serif; }
+.landing-payment-status { display: inline-flex; align-items: center; gap: 6px; color: #a7b7c9; font-size: 9px; white-space: nowrap; }
+.landing-payment-status > span { width: 6px; height: 6px; border-radius: 50%; background: #e8ad5a; box-shadow: 0 0 10px rgba(232, 173, 90, .45); }
+.landing-qr-placeholder { display: grid; min-height: 260px; place-items: center; padding: 22px; border: 1px dashed rgba(106, 165, 206, .3); border-radius: 12px; background: radial-gradient(circle at center, rgba(20, 84, 125, .17), transparent 68%), #070f1a; }
+.landing-qr-placeholder.has-image { min-height: 0; padding: 12px; border-style: solid; border-color: rgba(106, 165, 206, .2); }
+.landing-payment-qr { display: block; width: min(100%, 440px); max-height: min(70vh, 620px); margin: 0 auto; object-fit: contain; object-position: center; border-radius: 8px; background: #fff; }
+.landing-qr-frame { display: flex; width: min(100%, 300px); min-height: 214px; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 18px; border: 1px solid rgba(101, 161, 206, .16); border-radius: 10px; background: rgba(10, 23, 38, .68); color: #a8bbd0; text-align: center; }
+.landing-qr-frame svg { width: 58px; height: 58px; color: #55c5e1; stroke-width: 1.2; }
+.landing-qr-frame span { max-width: 230px; font-size: 12px; font-weight: 600; line-height: 1.6; }
+.landing-payment-instructions { margin: 14px 0 0; color: #8196ad; font-size: 10px; line-height: 1.75; }
 .landing-account { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1fr); align-items: center; gap: clamp(28px, 6vw, 82px); background: #08111e; }
 .landing-account-copy { max-width: 460px; }
 .landing-account-points { display: grid; gap: 13px; margin-top: 27px; color: #acbbcd; font-size: 11px; }
@@ -197,6 +218,12 @@
   .landing-plan-card { padding: 25px 22px 19px; }
   .landing-plan-price { font-size: 36px; }
   .landing-plan-credit { font-size: 30px; }
+  .landing-payment { grid-template-columns: minmax(0,1fr); gap: 30px; }
+  .landing-payment-panel { padding: 18px; }
+  .landing-qr-placeholder { min-height: 230px; padding: 16px; }
+  .landing-qr-placeholder.has-image { padding: 8px; }
+  .landing-payment-qr { width: 100%; max-height: 70vh; }
+  .landing-qr-frame { min-height: 192px; }
   .landing-account { grid-template-columns: minmax(0,1fr); gap: 32px; }
   .landing-auth-card { padding: 20px; }
   .landing-contact { align-items: flex-start; flex-wrap: wrap; }

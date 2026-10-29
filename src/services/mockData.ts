@@ -394,8 +394,8 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
 ];
 
 export const INITIAL_SETTINGS: UserSettings = {
-  userName: 'Institutional Demo User',
-  userEmail: 'trader@nexoracrypto.internal',
+  userName: '',
+  userEmail: '',
   currency: 'USD',
   autoTick: true,
   soundEnabled: true,
@@ -406,24 +406,24 @@ export const INITIAL_SETTINGS: UserSettings = {
 export const INITIAL_NOTIFICATIONS: AppNotification[] = [
   {
     id: 'notif-1',
-    title: 'Market Milestone',
-    message: 'Bitcoin touched 24h high of $69,120.00 (Simulated)',
+    title: 'Modeled Market Update',
+    message: 'Bitcoin reached a modeled 24-hour high of $69,120.00.',
     timestamp: '15m ago',
     type: 'info',
     read: false
   },
   {
     id: 'notif-2',
-    title: 'Trade Executed',
-    message: 'Your simulated order for 15 SOL has settled.',
+    title: 'Practice Order Recorded',
+    message: 'A practice order for 15 SOL was added to the local activity history. No live order was submitted.',
     timestamp: '1h ago',
     type: 'success',
     read: false
   },
   {
     id: 'notif-3',
-    title: 'Demo Environment Active',
-    message: 'Nexora is in demonstration mode. All transactions are simulated.',
+    title: 'Local Account Data',
+    message: 'Portfolio balances and activity are stored in this browser. No real funds or transactions are processed.',
     timestamp: '1d ago',
     type: 'info',
     read: true

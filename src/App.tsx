@@ -21,6 +21,7 @@ import { HistoryPage } from './pages/HistoryPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { HelpCenterPage } from './pages/HelpCenterPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 function AuthenticatedApp() {
   const [currentPage, setCurrentPage] = useState<string>('dashboard');
@@ -189,6 +190,8 @@ function AuthenticatedApp() {
               onNavigate={(page) => setCurrentPage(page)}
             />
           )}
+
+          {currentPage === 'profile' && <ProfilePage />}
         </main>
 
         {/* Footer */}
@@ -199,7 +202,7 @@ function AuthenticatedApp() {
               <span className="font-semibold text-white">NOVEXA SOFTWARE</span>
             </div>
             <div className="text-[11px] text-slate-500">
-              Simulated cryptocurrency portfolio & trading environment
+              Portfolio tools with locally modeled market activity
             </div>
           </div>
         </footer>

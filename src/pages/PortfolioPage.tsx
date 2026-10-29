@@ -156,13 +156,13 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
           </div>
           <div>
             <div className="text-xs font-bold text-white flex items-center gap-2">
-              <span>Simulated Portfolio Scale:</span>
+              <span>Portfolio Scale · Practice:</span>
               <span className="text-cyan-400 font-mono">
                 {PORTFOLIO_TIER_CONFIG[portfolioTier].label} ({PORTFOLIO_TIER_CONFIG[portfolioTier].description})
               </span>
             </div>
             <div className="text-[11px] text-slate-400">
-              Proportionally scales all simulated crypto balances and cash reserves with exact mathematical precision.
+              Proportionally scales practice asset balances and cash reserves.
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
           <button
             onClick={toggleHideBalance}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold border border-white/10 transition-colors"
-            title={hideBalance ? "Unhide simulated balances" : "Mask simulated balances"}
+            title={hideBalance ? "Unhide practice balances" : "Mask practice balances"}
           >
             {hideBalance ? <EyeOff className="w-3.5 h-3.5 text-cyan-400" /> : <Eye className="w-3.5 h-3.5 text-slate-400" />}
             <span>{hideBalance ? 'Balances Hidden' : 'Hide Balances'}</span>
@@ -197,18 +197,22 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
         </div>
       </div>
 
+      <p className="rounded-xl border border-cyan-500/15 bg-cyan-500/[0.04] px-4 py-3 text-[11px] leading-relaxed text-cyan-100/75">
+        Portfolio balances, valuations, and returns shown here are practice figures stored in this browser. They are not real funds or verified financial records.
+      </p>
+
       {/* Portfolio Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 rounded-2xl bg-[#0f1523] border border-white/5">
           <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-            <span>Total Simulated Assets</span>
+            <span>Total Practice Portfolio</span>
             <Wallet className="w-4 h-4 text-cyan-400" />
           </div>
           <div className="text-2xl font-bold font-mono text-white mt-2">
             {hideBalance ? '••••••••' : formatCurrency(totalPortfolioValue)}
           </div>
           <div className="text-xs text-slate-400 mt-1">
-            Includes {holdings.length} crypto tokens + simulated cash
+            Includes {holdings.length} crypto assets and practice cash
           </div>
         </div>
 
@@ -248,7 +252,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
 
         <div className="p-5 rounded-2xl bg-[#0f1523] border border-white/5">
           <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-            <span>Simulated Liquid Cash</span>
+            <span>Practice Cash Balance</span>
             <DollarSign className="w-4 h-4 text-yellow-400" />
           </div>
           <div className="text-2xl font-bold font-mono text-white mt-2">
@@ -266,7 +270,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           <input
             type="text"
-            placeholder="Search simulated asset by name, symbol, or type..."
+            placeholder="Search assets by name, symbol, or type..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-[#0a0e17] border border-white/10 rounded-xl pl-9 pr-3.5 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-cyan-500/50"
@@ -311,13 +315,13 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
                 </th>
                 <th className="py-3.5 cursor-pointer hover:text-white" onClick={() => toggleSort('value')}>
                   <div className="flex items-center gap-1">
-                    <span>Simulated Value</span>
+                    <span>Modeled Value</span>
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
                 <th className="py-3.5 cursor-pointer hover:text-white" onClick={() => toggleSort('pnl')}>
                   <div className="flex items-center gap-1">
-                    <span>Simulated P&L</span>
+                    <span>Practice P&amp;L</span>
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
@@ -336,7 +340,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
                       onClick={() => onOpenHoldingModal()}
                       className="mt-3 text-cyan-400 hover:underline text-xs"
                     >
-                      Add a simulated position
+                      Add a practice position
                     </button>
                   </td>
                 </tr>
@@ -448,7 +452,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
                           <button
                             onClick={() => onOpenHoldingModal(item.asset.id)}
                             className="p-1 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
-                            title="Edit simulated quantity"
+                            title="Edit practice quantity"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
@@ -500,7 +504,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
 
               <div className="p-4 rounded-xl bg-white/5 border border-white/5 grid grid-cols-2 gap-3 text-xs font-mono">
                 <div>
-                  <div className="text-[10px] text-slate-400 uppercase">Simulated Price</div>
+                  <div className="text-[10px] text-slate-400 uppercase">Modeled Price</div>
                   <div className="text-base font-bold text-white mt-0.5">
                     ${selectedAssetDetail.asset.price.toLocaleString()}
                   </div>
@@ -533,7 +537,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
               {selectedAssetDetail.holding && (
                 <div className="p-4 rounded-xl bg-cyan-950/20 border border-cyan-500/20 text-xs font-mono space-y-1.5">
                   <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">
-                    Your Simulated Position
+                    Your Practice Position
                   </div>
                   <div className="flex justify-between text-slate-300">
                     <span>Holding Quantity:</span>

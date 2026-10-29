@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCrypto } from '../../context/CryptoContext';
 import { useAuth } from '../../context/AuthContext';
+import { ProfileAvatar } from './ProfileAvatar';
 import {
   Search,
   Bell,
@@ -54,16 +55,17 @@ export const Header: React.FC<HeaderProps> = ({
   const topCoins = assets.slice(0, 4);
 
   const pageTitles: Record<string, { title: string; subtitle: string }> = {
-    dashboard: { title: 'Executive Overview', subtitle: 'Simulated cryptocurrency portfolio & real-time analytics' },
-    portfolio: { title: 'Portfolio & Holdings', subtitle: 'Manage simulated cryptocurrency balances and positions' },
-    market: { title: 'Market Explorer', subtitle: 'Cryptocurrency market capitalization and simulated dynamics' },
-    trading: { title: 'Simulated Exchange', subtitle: 'Simulate buy and sell executions with zero financial risk' },
-    swap: { title: 'Token Swap Simulator', subtitle: 'Simulated decentralized liquidity exchange' },
-    transfer: { title: 'Send & Receive', subtitle: 'Simulate outbound and inbound blockchain transactions' },
-    history: { title: 'Transaction Ledger', subtitle: 'Complete log of simulated trading and wallet activities' },
+    dashboard: { title: 'Executive Overview', subtitle: 'Portfolio overview and modeled market activity' },
+    portfolio: { title: 'Portfolio & Holdings', subtitle: 'Review practice positions and portfolio allocation' },
+    market: { title: 'Market Explorer', subtitle: 'Explore modeled digital asset market data' },
+    trading: { title: 'Trading', subtitle: 'Review practice orders using modeled prices' },
+    swap: { title: 'Token Swap', subtitle: 'Review a modeled token exchange' },
+    transfer: { title: 'Send & Receive', subtitle: 'Review practice transfer workflows' },
+    history: { title: 'Transaction History', subtitle: 'Review recorded portfolio activity' },
     analytics: { title: 'Analytics & Reports', subtitle: 'Performance analytics, risk distribution, and export' },
     help: { title: 'Help Center & Academy', subtitle: 'Instructional video tutorial, documentation, and FAQs' },
-    settings: { title: 'Platform Settings', subtitle: 'Configure currency, display, notifications, and simulation parameters' }
+    settings: { title: 'Account Settings', subtitle: 'Configure reporting currency, display, notifications, and account preferences' },
+    profile: { title: 'My Profile', subtitle: 'Personal details, plan schedule, and portfolio overview' }
   };
 
   const currentInfo = pageTitles[currentPage] || { title: 'Novexa Software', subtitle: 'Cryptocurrency Management Platform' };
@@ -133,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => addSimulatedCash(5000)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-all text-xs font-medium cursor-pointer"
-            title="Add $5,000 USD to portfolio"
+            title="Add $5,000 in practice funds"
           >
             <PlusCircle className="w-3.5 h-3.5" />
             <span>+$5,000</span>
@@ -213,7 +215,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="mt-3 flex flex-col gap-2 max-h-72 overflow-y-auto pr-1">
                   {notifications.length === 0 ? (
                     <div className="py-6 text-center text-xs text-slate-400">
-                      No notifications yet. Simulated activity will appear here.
+                      No notifications yet. Account activity updates will appear here.
                     </div>
                   ) : (
                     notifications.map((notif) => (
@@ -256,10 +258,10 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => setShowDemoInfo(true)}
             className="hidden lg:flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200 bg-white/5 px-2.5 py-1.5 rounded-xl border border-white/5 transition-colors cursor-pointer"
-            title="Platform Information"
+            title="About NEXORA"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-            <span>Platform Info</span>
+            <span>About NEXORA</span>
           </button>
 
           {/* User Account & Sign Out Dropdown */}
@@ -273,9 +275,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="flex items-center gap-2 p-1 pl-2 pr-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-colors"
               title="User Account"
             >
-              <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-[10px] text-white">
-                {(user?.name || settings.userName).charAt(0).toUpperCase()}
-              </div>
+              <ProfileAvatar name={user?.name || settings.userName} picture={user?.profilePictureDataUrl} className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-[10px] font-bold text-white" />
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
@@ -289,9 +289,20 @@ export const Header: React.FC<HeaderProps> = ({
                     {user?.email || settings.userEmail}
                   </div>
                   <div className="mt-1.5 inline-block text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                    Institutional Account
+                    {user?.role || 'Personal Account'}
                   </div>
                 </div>
+
+                <button
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    onNavigate('profile');
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-white/5 transition-colors text-left"
+                >
+                  <User className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Personal Profile</span>
+                </button>
 
                 <button
                   onClick={() => {
@@ -320,7 +331,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Demo Notice Modal */}
+      {/* Platform information and data disclosure */}
       {showDemoInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
           <div className="bg-[#111726] border border-cyan-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl">
@@ -341,15 +352,15 @@ export const Header: React.FC<HeaderProps> = ({
 
             <div className="mt-4 space-y-3 text-xs text-slate-300 leading-relaxed">
               <p>
-                <strong className="text-white">NOVEXA SOFTWARE</strong> is a modern, high-fidelity cryptocurrency management platform and simulation software designed for portfolio modeling, education, and user testing.
+                <strong className="text-white">NEXORA</strong> provides portfolio tracking and practice trading tools using locally modeled market data.
               </p>
               <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                <div className="text-cyan-400 font-semibold">• Zero Financial Risk:</div>
-                <p className="text-[11px] text-slate-400">All balances, transactions, addresses, order books, and swaps are processed within a client-authoritative simulated environment.</p>
+                <div className="text-cyan-400 font-semibold">• Practice activity only</div>
+                <p className="text-[11px] text-slate-400">Balances, prices, transfers, order books, and swaps are modeled in this application. No real funds are held or moved, and no blockchain transactions are submitted.</p>
               </div>
               <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                <div className="text-emerald-400 font-semibold">• Persistent State:</div>
-                <p className="text-[11px] text-slate-400">Your simulated trades, transfers, and custom holdings persist in your browser so you can monitor simulated portfolio changes across sessions.</p>
+                <div className="text-emerald-400 font-semibold">• Browser storage</div>
+                <p className="text-[11px] text-slate-400">Account and portfolio information is stored in this browser. It is not protected by a server or backed up remotely.</p>
               </div>
             </div>
 

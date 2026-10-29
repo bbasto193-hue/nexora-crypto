@@ -88,7 +88,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigateToLogin, e
     }
 
     if (!agreedTerms) {
-      setTermsError('You must acknowledge the simulation terms and sandbox notice.');
+      setTermsError('Please acknowledge how account data and portfolio activity are handled.');
       isValid = false;
     }
 
@@ -291,7 +291,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigateToLogin, e
                   className="w-4 h-4 mt-0.5 rounded border-white/10 bg-[#090d16] text-cyan-500 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-cyan-500 shrink-0"
                 />
                 <span className="text-xs text-slate-400 leading-relaxed">
-                  I acknowledge that Novexa Software is a simulated portfolio management platform and that all transactions and balances are strictly for testing and education.
+                  I understand that NEXORA uses locally modeled balances and activity. It does not execute trades, transfer assets, or verify payments. Account information is stored in this browser and is not backed by a server.
                 </span>
               </label>
               {termsError && (

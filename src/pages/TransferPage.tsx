@@ -59,11 +59,11 @@ export const TransferPage: React.FC = () => {
   };
   const activeFee = networkFees[networkSpeed];
 
-  // Preset institutional addresses for convenience
+  // Placeholder identifiers for the local practice flow
   const demoRecipients = [
-    { label: 'Primary Institutional Vault', address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' },
-    { label: 'Custody Cold Storage', address: 'bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq' },
-    { label: 'Escrow Settlement Wallet', address: 'NX-ESCROW-8921-9982-4100' }
+    { label: 'Practice Recipient 1', address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' },
+    { label: 'Practice Recipient 2', address: 'bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq' },
+    { label: 'Practice Recipient 3', address: 'NX-ESCROW-8921-9982-4100' }
   ];
 
   const handleCopyAddress = (text: string) => {
@@ -93,7 +93,7 @@ export const TransferPage: React.FC = () => {
     }
 
     if (!recipientAddress.trim()) {
-      setSendError('Please enter or select a recipient simulated identifier.');
+      setSendError('Please enter or select a practice recipient.');
       return;
     }
 
@@ -107,7 +107,7 @@ export const TransferPage: React.FC = () => {
       amount: numericSendAmount,
       recipientAddress,
       feeUSD: activeFee.feeUSD,
-      network: `${selectedSendAsset.name} Network (Simulated)`
+      network: `${selectedSendAsset.name} Practice Network`
     });
 
     if (result.success) {
@@ -122,8 +122,7 @@ export const TransferPage: React.FC = () => {
     const depositAmt = parseFloat(simulateDepositAmount) || 0.1;
     executeSimulateDeposit({
       assetId: selectedReceiveAsset.id,
-      amount: depositAmt,
-      senderAddress: 'simulated-liquidity-partner.eth'
+      amount: depositAmt
     });
   };
 
@@ -161,9 +160,9 @@ export const TransferPage: React.FC = () => {
         <div className="p-6 rounded-2xl bg-[#0f1523] border border-white/5 shadow-2xl space-y-5">
           <div className="flex items-center justify-between pb-3 border-b border-white/5">
             <div>
-              <h2 className="font-bold text-base text-white">Send Cryptocurrency</h2>
+                  <h2 className="font-bold text-base text-white">Review a Practice Transfer</h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Transfer digital assets to an external wallet or institutional address
+                    Explore the transfer workflow using practice balances. No assets will be sent.
               </p>
             </div>
           </div>
@@ -208,7 +207,7 @@ export const TransferPage: React.FC = () => {
 
               {/* Preset address chips */}
               <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                <span className="text-[10px] text-slate-400">Presets:</span>
+                <span className="text-[10px] text-slate-400">Practice recipients:</span>
                 {demoRecipients.map((preset, idx) => (
                   <button
                     key={idx}
@@ -312,8 +311,8 @@ export const TransferPage: React.FC = () => {
                     <Send className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-white">Confirm Transfer</h3>
-                    <p className="text-xs text-slate-400">Review transfer parameters before dispatch</p>
+                    <h3 className="font-bold text-base text-white">Confirm Practice Transfer</h3>
+                    <p className="text-xs text-slate-400">Review the locally recorded practice activity</p>
                   </div>
                 </div>
 
@@ -345,7 +344,7 @@ export const TransferPage: React.FC = () => {
                 <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 flex items-start gap-2">
                   <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
                   <span>
-                    Notice: Transactions are processed within the NOVEXA institutional ledger environment.
+                    This action records practice activity in this browser only. No network request or blockchain transaction is submitted.
                   </span>
                 </div>
 
@@ -362,7 +361,7 @@ export const TransferPage: React.FC = () => {
                     onClick={handleConfirmSend}
                     className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-950/40 cursor-pointer"
                   >
-                    Confirm & Send
+                    Confirm Practice Transfer
                   </button>
                 </div>
               </div>
@@ -459,7 +458,7 @@ export const TransferPage: React.FC = () => {
           {/* Deposit Address Card */}
           <div className="p-3.5 rounded-xl bg-[#0a0e17] border border-white/5 space-y-1">
             <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Deposit Address
+              Practice Address · Not Valid for Deposits
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="font-mono text-xs text-white break-all select-all">
@@ -481,7 +480,7 @@ export const TransferPage: React.FC = () => {
           <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 flex items-start gap-2">
             <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
             <p className="text-[11px] text-amber-200/90 leading-relaxed">
-              Notice: For portfolio simulation and modeling only. Do not send live mainnet cryptocurrency to this address.
+              This address and QR graphic are illustrative only and are not valid deposit destinations. Do not send cryptocurrency to them.
             </p>
           </div>
 
@@ -490,9 +489,9 @@ export const TransferPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-purple-400" />
-                <span className="font-bold text-xs text-white">Simulate Deposit</span>
+                <span className="font-bold text-xs text-white">Practice Deposit Entry</span>
               </div>
-              <span className="text-[10px] font-mono text-slate-400">Credit incoming assets to portfolio</span>
+              <span className="text-[10px] font-mono text-slate-400">Record an illustrative credit locally</span>
             </div>
 
             <div className="flex items-center gap-3">
@@ -511,7 +510,7 @@ export const TransferPage: React.FC = () => {
                 onClick={handleTriggerDemoDeposit}
                 className="flex-1 py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-colors shadow-lg shadow-purple-950/40 cursor-pointer"
               >
-                Deposit +{simulateDepositAmount} {selectedReceiveAsset.symbol}
+                Add Practice Deposit
               </button>
             </div>
           </div>

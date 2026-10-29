@@ -200,7 +200,7 @@ export const AnalyticsPage: React.FC = () => {
                 <th className="py-3">Avg Cost</th>
                 <th className="py-3">Market Price</th>
                 <th className="py-3">Position Value</th>
-                <th className="py-3">Simulated P&L</th>
+                <th className="py-3">Practice P&L</th>
                 <th className="py-3">Return (%)</th>
                 <th className="py-3 pr-3">Portfolio Share</th>
               </tr>
@@ -287,7 +287,7 @@ export const AnalyticsPage: React.FC = () => {
             <div className="flex items-center justify-between p-4 border-b border-white/5">
               <div className="flex items-center gap-2">
                 <FileSpreadsheet className="w-5 h-5 text-cyan-400" />
-                <h3 className="font-bold text-base text-white">Simulated Portfolio Statement</h3>
+                <h3 className="font-bold text-base text-white">Portfolio Summary · Practice Data</h3>
               </div>
               <button
                 onClick={() => setShowReportModal(false)}
@@ -302,7 +302,7 @@ export const AnalyticsPage: React.FC = () => {
                 <div>
                   <div className="font-bold text-sm text-white font-sans">NEXORA CRYPTO SUITE</div>
                   <div className="text-[11px] text-slate-400">Client: {settings.userName}</div>
-                  <div className="text-[11px] text-slate-400">Account Tier: Institutional Sandbox</div>
+                  <div className="text-[11px] text-slate-400">Portfolio scale: Institutional · Practice</div>
                 </div>
                 <div className="text-right">
                   <div className="text-white font-bold">REPORT DATE</div>
@@ -316,13 +316,13 @@ export const AnalyticsPage: React.FC = () => {
                   <span className="text-cyan-400">{formatCurrency(totalPortfolioValue)}</span>
                 </div>
                 <div className="flex justify-between text-slate-300">
-                  <span>Unrealized Simulated Return:</span>
+                  <span>Modeled Practice Return:</span>
                   <span className={portfolioTotalPnLUSD >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
                     {portfolioTotalPnLUSD >= 0 ? '+' : ''}{formatCurrency(portfolioTotalPnLUSD)} ({portfolioTotalPnLPct.toFixed(2)}%)
                   </span>
                 </div>
                 <div className="flex justify-between text-slate-300">
-                  <span>Simulated Liquid Cash:</span>
+                  <span>Practice Cash Balance:</span>
                   <span className="text-white">{formatCurrency(cashBalance)} ({cashPct.toFixed(1)}%)</span>
                 </div>
               </div>
@@ -340,7 +340,7 @@ export const AnalyticsPage: React.FC = () => {
               </div>
 
               <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-[10px] text-rose-300 font-sans">
-                DISCLAIMER: This statement was produced in Nexora's mock simulation environment for educational modeling. All values are non-custodial and not certified accounting records.
+                This summary contains locally modeled practice values. It is not a bank or brokerage statement, certified accounting record, or evidence of real assets.
               </div>
             </div>
 

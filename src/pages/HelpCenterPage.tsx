@@ -27,24 +27,24 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({
 
   const faqs = [
     {
-      q: 'How does the simulated trading engine work?',
-      a: 'All buy, sell, and swap orders execute against our client-authoritative simulated liquidity engine. Prices reflect realistic simulated movements, and 0.15% broker fees are deducted from your demo cash balance or token proceeds. No real funds or blockchain contracts are touched.'
+      q: 'How do practice orders work?',
+      a: 'Buy, sell, and swap actions update locally stored practice balances using modeled prices and fee calculations. They are not sent to an exchange, do not move real funds, and do not create blockchain transactions.'
     },
     {
       q: 'How do Large Portfolio Balances ($2.5M, $85M, $1.25B, $9.8B) work?',
-      a: 'Nexora supports institutional balance scales. You can toggle between evaluation tiers (Starter $100K, Pro $2.5M, Institutional $85M, Sovereign $1.25B, and Global Prime $9.8B). The platform scales all crypto holdings and cash reserves proportionally so that individual allocations and sum totals remain 100% mathematically consistent.'
+      a: 'You can choose a portfolio scale (Starter $100K, Pro $2.5M, Institutional $85M, Sovereign $1.25B, or Global Prime $9.8B). These are practice figures; changing scale adjusts the locally modeled holdings and cash proportionally.'
     },
     {
-      q: 'Can I simulate inbound and outbound crypto transfers?',
-      a: 'Yes. In the Send & Receive simulator, you can generate demonstration QR codes, copy testnet/sandbox deposit addresses, and even trigger simulated inbound liquidity deposits to test wallet workflows without real funds.'
+      q: 'Can I send or receive cryptocurrency?',
+      a: 'No. Send & Receive provides local practice workflows only. Addresses and QR codes shown in that area are not verified deposit destinations; no transaction is submitted and no real assets are credited. Never send cryptocurrency to an address displayed there.'
     },
     {
-      q: 'Where do I place my custom tutorial MP4 video file?',
-      a: 'Place your video at `/videos/nexora-getting-started.mp4` in the project root public directory. The player automatically detects the file and switches from the simulated canvas walkthrough to native MP4 playback.'
+      q: 'Where can I access the product walkthrough?',
+      a: 'Open the interactive walkthrough from this page or from Platform Settings. It introduces the dashboard, portfolio tools, practice trading, and account preferences.'
     },
     {
-      q: 'Are my demonstration balances saved across browser sessions?',
-      a: 'Yes. Nexora saves your holdings, custom positions, cash balance, and transaction ledger in encrypted browser local storage so your portfolio modeling persists across sessions.'
+      q: 'Are my account balances saved across browser sessions?',
+      a: 'Practice holdings, balances, preferences, and activity are stored in this browser. Browser storage is not encrypted server storage or a secure backup; clear site data or device access may affect privacy and availability.'
     }
   ];
 
@@ -55,13 +55,13 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({
         <div className="space-y-2 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>NEXORA KNOWLEDGE & TRAINING BASE</span>
+            <span>NEXORA LEARNING CENTER</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Help Center & Training Academy
+            Help & Learning Center
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Master the Nexora Crypto terminal, explore simulator documentation, review video scripts, or replay the interactive onboarding tutorial.
+            Explore platform features and replay the interactive product walkthrough.
           </p>
         </div>
 
@@ -82,9 +82,9 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({
             <BookOpen className="w-5 h-5 text-cyan-400" />
             <div>
               <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-                Video Course Syllabus & Storyboard
+                Walkthrough Chapters
               </h2>
-              <p className="text-xs text-slate-400">10 structured modules covering every facet of Nexora</p>
+                <p className="text-xs text-slate-400">10 concise modules introducing the NEXORA workspace</p>
             </div>
           </div>
           <button
@@ -128,7 +128,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({
             <h2 className="text-sm font-bold text-white uppercase tracking-wider">
               Frequently Asked Questions
             </h2>
-            <p className="text-xs text-slate-400">Essential answers regarding simulator operations and balances</p>
+            <p className="text-xs text-slate-400">Answers about portfolio tools, practice activity, and account data</p>
           </div>
         </div>
 
@@ -166,7 +166,7 @@ export const HelpCenterPage: React.FC<HelpCenterPageProps> = ({
       <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-xs text-slate-400 flex items-start gap-3">
         <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
         <div className="leading-relaxed">
-          <strong className="text-white">Educational & Demonstration Scope:</strong> Nexora Crypto is designed for algorithmic strategy testing, UI demonstrations, and portfolio risk modeling. All balances are simulated and cannot be withdrawn to external banking networks.
+          <strong className="text-white">Practice activity and data:</strong> NEXORA stores modeled balances and activity in this browser. No real funds are held or transferred, and no blockchain or banking transactions are submitted.
         </div>
       </div>
     </div>

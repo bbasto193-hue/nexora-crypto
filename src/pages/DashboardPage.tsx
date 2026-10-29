@@ -91,7 +91,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               <span>NOVEXA Management Terminal</span>
             </div>
             <div className="text-[11px] text-slate-400 mt-0.5">
-              Real-time cryptocurrency management, market tracking, and portfolio operations.
+              Portfolio overview, digital asset information, and modeled market values.
             </div>
           </div>
         </div>
@@ -390,7 +390,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-sm font-bold text-white uppercase tracking-wider">Cryptocurrency Watchlist</h2>
-            <p className="text-xs text-slate-400 mt-0.5">Live market prices with instant trade actions</p>
+            <p className="text-xs text-slate-400 mt-0.5">Modeled market prices with local order previews</p>
           </div>
           <button
             onClick={() => onNavigate('market')}

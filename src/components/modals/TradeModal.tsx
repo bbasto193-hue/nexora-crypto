@@ -80,7 +80,7 @@ export const TradeModal: React.FC<TradeModalProps> = ({
     }
 
     if (type === 'buy' && netTotalUSD > cashBalance) {
-      setErrorMsg(`Insufficient simulated cash. You need ${formatCurrency(netTotalUSD)}, available: ${formatCurrency(cashBalance)}`);
+      setErrorMsg(`Insufficient practice balance. Required: ${formatCurrency(netTotalUSD)}, available: ${formatCurrency(cashBalance)}`);
       return;
     }
 
@@ -115,9 +115,9 @@ export const TradeModal: React.FC<TradeModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/5">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-base text-white">Simulated Trade Order</span>
+            <span className="font-bold text-base text-white">Practice Trade Order</span>
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-              SANDBOX
+              PRACTICE
             </span>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
@@ -133,9 +133,9 @@ export const TradeModal: React.FC<TradeModalProps> = ({
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-white">Simulated Order Settled!</h3>
+              <h3 className="text-lg font-bold text-white">Practice Order Recorded</h3>
               <p className="text-xs text-slate-400 mt-1">
-                Your paper trading order has been filled and recorded to your simulated ledger.
+                This practice order was added to your local activity history. No real order was submitted.
               </p>
             </div>
 
@@ -302,7 +302,7 @@ export const TradeModal: React.FC<TradeModalProps> = ({
             {/* Simulated Order Breakdown */}
             <div className="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1.5 text-xs font-mono">
               <div className="flex justify-between text-slate-400">
-                <span>Simulated Market Price:</span>
+                <span>Modeled Market Price:</span>
                 <span className="text-white">${currentAsset.price.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-slate-400">
@@ -310,7 +310,7 @@ export const TradeModal: React.FC<TradeModalProps> = ({
                 <span className="text-white">{amountCrypto.toFixed(amountCrypto < 1 ? 4 : 2)} {currentAsset.symbol}</span>
               </div>
               <div className="flex justify-between text-slate-400">
-                <span>Simulated Fee (0.15%):</span>
+                <span>Practice Fee (0.15%):</span>
                 <span className="text-slate-300">${feeUSD.toFixed(2)}</span>
               </div>
               <div className="flex justify-between pt-1.5 border-t border-white/5 font-semibold">
@@ -341,7 +341,7 @@ export const TradeModal: React.FC<TradeModalProps> = ({
 
             <div className="text-[10px] text-center text-slate-400 flex items-center justify-center gap-1">
               <ShieldAlert className="w-3 h-3 text-cyan-400" />
-              <span>Simulated trade execution. No real capital or blockchain involved.</span>
+              <span>Practice calculation only. No real funds are used and no blockchain transaction is submitted.</span>
             </div>
           </form>
         )}

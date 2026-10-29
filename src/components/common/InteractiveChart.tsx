@@ -134,10 +134,10 @@ export const InteractiveChart: React.FC<InteractiveChartProps> = ({
           <div className="text-[11px] text-slate-400 mt-0.5">
             {hoverIndex !== null ? (
               <span className="text-cyan-400 font-mono">
-                Simulated {timeRange} checkpoint ({chartData.labelPrefix} #{hoverIndex + 1})
+                Modeled {timeRange} checkpoint ({chartData.labelPrefix} #{hoverIndex + 1})
               </span>
             ) : (
-              <span>Simulated market valuation</span>
+              <span>Modeled market valuation</span>
             )}
           </div>
         </div>
@@ -251,14 +251,14 @@ export const InteractiveChart: React.FC<InteractiveChartProps> = ({
         {/* Dynamic High/Low Stats Footer */}
         <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-2 border-t border-white/5">
           <div className="flex items-center gap-2">
-            <span className="text-slate-400">SIMULATED RANGE:</span>
+            <span className="text-slate-400">MODELED RANGE:</span>
             <span className="text-rose-400/90 font-semibold">Low {formatCurrency(chartData.min)}</span>
             <span>—</span>
             <span className="text-emerald-400/90 font-semibold">High {formatCurrency(chartData.max)}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-slate-400">Real-Time Simulation Feed</span>
+            <span className="text-slate-400">Modeled Price Feed</span>
           </div>
         </div>
       </div>

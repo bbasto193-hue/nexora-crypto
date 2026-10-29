@@ -16,6 +16,8 @@ import {
   INITIAL_NOTIFICATIONS
 } from '../services/mockData';
 import { soundManager } from '../utils/audio';
+import { SUBSCRIPTION_DURATION_DAYS, SUBSCRIPTION_PLANS } from '../services/subscriptionPlans';
+import { useAuth } from './AuthContext';
 
 interface Toast {
   id: string;
@@ -44,13 +46,10 @@ interface SubscriptionState {
   history: SubscriptionCreditEntry[];
 }
 
-const SUBSCRIPTION_DURATION_DAYS = 34;
 const SUBSCRIPTION_DAY_MS = 24 * 60 * 60 * 1000;
-const SUBSCRIPTION_PLAN_CREDITS: Record<number, number> = {
-  1: 100_000,
-  2: 120_000,
-  3: 220_000
-};
+const SUBSCRIPTION_PLAN_CREDITS = Object.fromEntries(
+  SUBSCRIPTION_PLANS.map((plan) => [plan.id, plan.dailyCreditUsd])
+) as Record<number, number>;
 const EMPTY_SUBSCRIPTION_STATE: SubscriptionState = {
   activePlanId: null,
   activationId: null,
@@ -64,10 +63,10 @@ export const PORTFOLIO_TIER_CONFIG: Record<
   PortfolioTier,
   { label: string; targetUSD: number; description: string }
 > = {
-  starter: { label: 'Starter ($100K)', targetUSD: 100000, description: 'Standard $100K demo portfolio' },
+  starter: { label: 'Starter ($100K)', targetUSD: 100000, description: 'Standard $100K portfolio scale' },
   pro: { label: 'Pro Desk ($2.5M)', targetUSD: 2500000, description: 'Family office $2.5M test portfolio' },
   institutional: { label: 'Institutional ($85M)', targetUSD: 85000000, description: 'Prime brokerage $85M allocation' },
-  sovereign: { label: 'Sovereign ($1.25B)', targetUSD: 1250000000, description: 'Sovereign reserve $1.25B simulation' },
+  sovereign: { label: 'Sovereign ($1.25B)', targetUSD: 1250000000, description: 'Sovereign reserve portfolio scale' },
   prime: { label: 'Global Prime ($9.8B)', targetUSD: 9800000000, description: 'Tier-1 market maker $9.8B liquidity' }
 };
 
@@ -143,11 +142,11 @@ interface CryptoContextType {
 }
 
 const STORAGE_KEY = 'nexora_crypto_state_v1';
-const SUBSCRIPTION_STORAGE_KEY = `${STORAGE_KEY}_subscription`;
+const LEGACY_STATE_MIGRATION_KEY = `${STORAGE_KEY}_owner_migration_v1`;
 
-const readSubscriptionState = (): SubscriptionState => {
+const readSubscriptionState = (storageKey: string): SubscriptionState => {
   try {
-    const saved = localStorage.getItem(SUBSCRIPTION_STORAGE_KEY);
+    const saved = localStorage.getItem(`${storageKey}_subscription`);
     if (!saved) return EMPTY_SUBSCRIPTION_STATE;
     const parsed = JSON.parse(saved) as Partial<SubscriptionState>;
     const activatedAt = typeof parsed.activatedAt === 'number' ? parsed.activatedAt : null;
@@ -192,10 +191,33 @@ const CURRENCY_RATES = {
 };
 
 export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+  const storageKey = `${STORAGE_KEY}_${user?.id ?? 'owner'}`;
+  const subscriptionStorageKey = `${storageKey}_subscription`;
+
+  if (user?.id) {
+    try {
+      if (localStorage.getItem(LEGACY_STATE_MIGRATION_KEY) !== 'true') {
+        const stateParts = ['assets', 'holdings', 'cash', 'txs', 'settings', 'notifs', 'hideBalance', 'tier', 'subscription'];
+        stateParts.forEach((part) => {
+          const legacyKey = `${STORAGE_KEY}_${part}`;
+          const ownerKey = part === 'subscription' ? subscriptionStorageKey : `${storageKey}_${part}`;
+          if (localStorage.getItem(ownerKey) === null) {
+            const legacyValue = localStorage.getItem(legacyKey);
+            if (legacyValue !== null) localStorage.setItem(ownerKey, legacyValue);
+          }
+        });
+        localStorage.setItem(LEGACY_STATE_MIGRATION_KEY, 'true');
+      }
+    } catch (error) {
+      console.error('Existing local demo state could not be migrated:', error);
+    }
+  }
+
   // Load state from localStorage or initialize
   const [assets, setAssets] = useState<CryptoAsset[]>(() => {
     try {
-      const saved = localStorage.getItem(`${STORAGE_KEY}_assets`);
+      const saved = localStorage.getItem(`${storageKey}_assets`);
       return saved ? JSON.parse(saved) : INITIAL_ASSETS;
     } catch {
       return INITIAL_ASSETS;
@@ -204,7 +226,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [holdings, setHoldings] = useState<Holding[]>(() => {
     try {
-      const saved = localStorage.getItem(`${STORAGE_KEY}_holdings`);
+      const saved = localStorage.getItem(`${storageKey}_holdings`);
       return saved ? JSON.parse(saved) : INITIAL_HOLDINGS;
     } catch {
       return INITIAL_HOLDINGS;
@@ -213,7 +235,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [cashBalance, setCashBalance] = useState<number>(() => {
     try {
-      const saved = localStorage.getItem(`${STORAGE_KEY}_cash`);
+      const saved = localStorage.getItem(`${storageKey}_cash`);
       return saved ? JSON.parse(saved) : INITIAL_CASH_BALANCE;
     } catch {
       return INITIAL_CASH_BALANCE;
@@ -222,7 +244,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
     try {
-      const saved = localStorage.getItem(`${STORAGE_KEY}_txs`);
+      const saved = localStorage.getItem(`${storageKey}_txs`);
       return saved ? JSON.parse(saved) : INITIAL_TRANSACTIONS;
     } catch {
       return INITIAL_TRANSACTIONS;
@@ -231,16 +253,25 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [settings, setSettings] = useState<UserSettings>(() => {
     try {
-      const saved = localStorage.getItem(`${STORAGE_KEY}_settings`);
-      return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
+      const saved = localStorage.getItem(`${storageKey}_settings`);
+      const storedSettings = saved ? JSON.parse(saved) as UserSettings : INITIAL_SETTINGS;
+      return {
+        ...storedSettings,
+        userName: user?.name ?? storedSettings.userName,
+        userEmail: user?.email ?? storedSettings.userEmail
+      };
     } catch {
-      return INITIAL_SETTINGS;
+      return {
+        ...INITIAL_SETTINGS,
+        userName: user?.name ?? INITIAL_SETTINGS.userName,
+        userEmail: user?.email ?? INITIAL_SETTINGS.userEmail
+      };
     }
   });
 
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
     try {
-      const saved = localStorage.getItem(`${STORAGE_KEY}_notifs`);
+      const saved = localStorage.getItem(`${storageKey}_notifs`);
       return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
     } catch {
       return INITIAL_NOTIFICATIONS;
@@ -250,7 +281,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [hideBalance, setHideBalance] = useState<boolean>(() => {
     try {
-      return localStorage.getItem(`${STORAGE_KEY}_hideBalance`) === 'true';
+      return localStorage.getItem(`${storageKey}_hideBalance`) === 'true';
     } catch {
       return false;
     }
@@ -258,16 +289,16 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [portfolioTier, setPortfolioTier] = useState<PortfolioTier>(() => {
     try {
-      return (localStorage.getItem(`${STORAGE_KEY}_tier`) as PortfolioTier) || 'starter';
+      return (localStorage.getItem(`${storageKey}_tier`) as PortfolioTier) || 'starter';
     } catch {
       return 'starter';
     }
   });
 
-  const [subscriptionState, setSubscriptionState] = useState<SubscriptionState>(readSubscriptionState);
+  const [subscriptionState, setSubscriptionState] = useState<SubscriptionState>(() => readSubscriptionState(storageKey));
 
   const processSubscriptionCredits = useCallback(() => {
-    const current = readSubscriptionState();
+    const current = readSubscriptionState(storageKey);
     if (current.activatedAt === null || current.activationId === null || current.activePlanId === null) return;
 
     const elapsedDays = Math.min(
@@ -303,7 +334,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
 
     try {
-      localStorage.setItem(SUBSCRIPTION_STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(subscriptionStorageKey, JSON.stringify(updated));
     } catch (error) {
       console.error('Subscription demo state could not be persisted:', error);
     }
@@ -312,7 +343,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const activateSubscription = useCallback((planId: number) => {
     if (!SUBSCRIPTION_PLAN_CREDITS[planId]) return false;
-    const current = readSubscriptionState();
+    const current = readSubscriptionState(storageKey);
     const activatedAt = Date.now();
     const activationId = `plan-${planId}-${activatedAt}-${Math.random().toString(36).slice(2, 8)}`;
     const updated: SubscriptionState = {
@@ -324,7 +355,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       simulatedBalance: 0
     };
     try {
-      localStorage.setItem(SUBSCRIPTION_STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(subscriptionStorageKey, JSON.stringify(updated));
     } catch (error) {
       console.error('Subscription activation could not be saved:', error);
       return false;
@@ -342,7 +373,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const toggleHideBalance = useCallback(() => {
     setHideBalance((prev) => {
       const next = !prev;
-      localStorage.setItem(`${STORAGE_KEY}_hideBalance`, String(next));
+      localStorage.setItem(`${storageKey}_hideBalance`, String(next));
       soundManager.playClick(true);
       return next;
     });
@@ -351,13 +382,13 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Persist state
   useEffect(() => {
     try {
-      localStorage.setItem(`${STORAGE_KEY}_assets`, JSON.stringify(assets));
-      localStorage.setItem(`${STORAGE_KEY}_holdings`, JSON.stringify(holdings));
-      localStorage.setItem(`${STORAGE_KEY}_cash`, JSON.stringify(cashBalance));
-      localStorage.setItem(`${STORAGE_KEY}_txs`, JSON.stringify(transactions));
-      localStorage.setItem(`${STORAGE_KEY}_settings`, JSON.stringify(settings));
-      localStorage.setItem(`${STORAGE_KEY}_notifs`, JSON.stringify(notifications));
-      localStorage.setItem(`${STORAGE_KEY}_tier`, portfolioTier);
+      localStorage.setItem(`${storageKey}_assets`, JSON.stringify(assets));
+      localStorage.setItem(`${storageKey}_holdings`, JSON.stringify(holdings));
+      localStorage.setItem(`${storageKey}_cash`, JSON.stringify(cashBalance));
+      localStorage.setItem(`${storageKey}_txs`, JSON.stringify(transactions));
+      localStorage.setItem(`${storageKey}_settings`, JSON.stringify(settings));
+      localStorage.setItem(`${storageKey}_notifs`, JSON.stringify(notifications));
+      localStorage.setItem(`${storageKey}_tier`, portfolioTier);
     } catch (e) {
       console.error('LocalStorage write failed:', e);
     }
@@ -402,17 +433,17 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setPortfolioTier('starter');
     setHideBalance(false);
     setSubscriptionState(EMPTY_SUBSCRIPTION_STATE);
-    localStorage.removeItem(`${STORAGE_KEY}_assets`);
-    localStorage.removeItem(`${STORAGE_KEY}_holdings`);
-    localStorage.removeItem(`${STORAGE_KEY}_cash`);
-    localStorage.removeItem(`${STORAGE_KEY}_txs`);
-    localStorage.removeItem(`${STORAGE_KEY}_settings`);
-    localStorage.removeItem(`${STORAGE_KEY}_notifs`);
-    localStorage.removeItem(`${STORAGE_KEY}_tier`);
-    localStorage.removeItem(`${STORAGE_KEY}_hideBalance`);
-    localStorage.removeItem(SUBSCRIPTION_STORAGE_KEY);
+    localStorage.removeItem(`${storageKey}_assets`);
+    localStorage.removeItem(`${storageKey}_holdings`);
+    localStorage.removeItem(`${storageKey}_cash`);
+    localStorage.removeItem(`${storageKey}_txs`);
+    localStorage.removeItem(`${storageKey}_settings`);
+    localStorage.removeItem(`${storageKey}_notifs`);
+    localStorage.removeItem(`${storageKey}_tier`);
+    localStorage.removeItem(`${storageKey}_hideBalance`);
+    localStorage.removeItem(subscriptionStorageKey);
     soundManager.playSuccess(true);
-    addToast('info', 'Demo State Reset', 'All simulated balances, assets, and histories have been restored to defaults.');
+    addToast('info', 'Portfolio Restored', 'Practice balances, assets, and activity history have been restored to the initial state.');
   }, [addToast]);
 
   const addSimulatedCash = useCallback((amount: number) => {
@@ -432,7 +463,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
     setTransactions((prev) => [newTx, ...prev]);
     soundManager.playSuccess(settings.soundEnabled);
-    addToast('success', 'Demo Funds Added', `Granted +$${amount.toLocaleString()} simulated USD cash balance.`);
+    addToast('success', 'Practice Funds Added', `Added +$${amount.toLocaleString()} to your local practice balance. This is not a real deposit.`);
   }, [addToast, settings.soundEnabled]);
 
   // Scale Portfolio to Target Tier (e.g. $100K, $2.5M, $85M, $1.25B, $9.8B)
@@ -483,7 +514,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       addToast(
         'success',
         'Portfolio Scale Adjusted',
-        `Configured demonstration portfolio to ${tierLabel} with consistent asset allocation.`
+        `Practice portfolio adjusted to ${tierLabel} with consistent asset allocation.`
       );
     },
     [holdings, assets, cashBalance, addToast]
@@ -649,7 +680,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           soundManager.playError(settings.soundEnabled);
           return {
             success: false,
-            message: `Insufficient simulated cash. Required: $${totalCostUSD.toFixed(2)}, Available: $${cashBalance.toFixed(2)}`
+            message: `Insufficient practice balance. Required: $${totalCostUSD.toFixed(2)}, available: $${cashBalance.toFixed(2)}`
           };
         }
 
@@ -728,7 +759,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         timestamp: new Date().toISOString(),
         status: 'Simulated — Completed',
         hash: `NX-SIM-${Math.floor(10000000 + Math.random() * 90000000)}`,
-        note: `Simulated ${type.toUpperCase()} execution on Nexora Terminal`
+        note: `Practice ${type.toUpperCase()} entry on NEXORA`
       };
       setTransactions((prev) => [tx, ...prev]);
 
@@ -736,10 +767,10 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       addToast(
         'success',
         `Order Filled (${type.toUpperCase()})`,
-        `Successfully simulated ${type} of ${amountCrypto} ${asset.symbol} at $${pricePerUnit.toLocaleString()}.`
+        `Recorded a practice ${type} of ${amountCrypto} ${asset.symbol} at the modeled price of $${pricePerUnit.toLocaleString()}. No live order was submitted.`
       );
 
-      return { success: true, message: 'Simulated trade completed successfully.' };
+      return { success: true, message: 'Practice order recorded locally. No live order was submitted.' };
     },
     [assets, cashBalance, holdings, settings.soundEnabled, addToast]
   );
@@ -830,11 +861,11 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       soundManager.playSuccess(settings.soundEnabled);
       addToast(
         'success',
-        'Simulated Swap Executed',
-        `Swapped ${fromAmount} ${fromAsset.symbol} for ${toAmount.toFixed(4)} ${toAsset.symbol}.`
+        'Practice Swap Recorded',
+        `Recorded a local practice swap of ${fromAmount} ${fromAsset.symbol} for ${toAmount.toFixed(4)} ${toAsset.symbol}. No network transaction was submitted.`
       );
 
-      return { success: true, message: 'Swap executed successfully in simulation.' };
+      return { success: true, message: 'Practice swap recorded locally. No network transaction was submitted.' };
     },
     [assets, holdings, settings.soundEnabled, addToast]
   );
@@ -896,18 +927,18 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         hash: `NX-TX-${Math.floor(10000000 + Math.random() * 90000000)}`,
         recipientAddress,
         network,
-        note: note || `Demo transfer to ${recipientAddress.substring(0, 10)}...`
+        note: note || `Practice transfer entry to ${recipientAddress.substring(0, 10)}...`
       };
       setTransactions((prev) => [tx, ...prev]);
 
       soundManager.playSuccess(settings.soundEnabled);
       addToast(
         'success',
-        'Demo Transfer Sent',
-        `Simulated broadcast: ${amount} ${asset.symbol} dispatched to test recipient.`
+        'Practice Transfer Recorded',
+        `Recorded ${amount} ${asset.symbol} as local practice activity. No transfer was broadcast and no assets were sent.`
       );
 
-      return { success: true, message: 'Simulated transfer recorded.' };
+      return { success: true, message: 'Practice transfer recorded locally. No assets were sent.' };
     },
     [assets, holdings, settings.soundEnabled, addToast]
   );
@@ -959,20 +990,20 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         timestamp: new Date().toISOString(),
         status: 'Simulated — Completed',
         hash: `NX-DEP-${Math.floor(10000000 + Math.random() * 90000000)}`,
-        senderAddress: senderAddress || 'demo-external-vault.eth',
-        network: 'Simulation Layer',
-        note: `Simulated inbound transfer from demonstration partner`
+        ...(senderAddress ? { senderAddress } : {}),
+        network: 'Local Practice Record',
+        note: 'Practice deposit entry; no funds received'
       };
       setTransactions((prev) => [tx, ...prev]);
 
       soundManager.playSuccess(settings.soundEnabled);
       addToast(
         'success',
-        'Simulated Deposit Received',
-        `Received +${amount} ${asset.symbol} in demonstration wallet.`
+        'Practice Deposit Entry Added',
+        `Added +${amount} ${asset.symbol} to the local practice balance. No funds were received.`
       );
 
-      return { success: true, message: 'Simulated deposit completed.' };
+      return { success: true, message: 'Practice deposit entry recorded locally. No funds were received.' };
     },
     [assets, settings.soundEnabled, addToast]
   );
@@ -1014,7 +1045,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
 
       soundManager.playSuccess(settings.soundEnabled);
-      addToast('success', 'Holdings Updated', `Updated simulated position in ${asset.name}.`);
+      addToast('success', 'Practice Position Updated', `Updated the local practice position in ${asset.name}.`);
     },
     [assets, settings.soundEnabled, addToast]
   );
@@ -1024,7 +1055,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const asset = assets.find((a) => a.id === assetId);
       setHoldings((prev) => prev.filter((h) => h.assetId !== assetId));
       soundManager.playClick(settings.soundEnabled);
-      addToast('info', 'Position Removed', `Removed ${asset?.name || 'asset'} from simulated portfolio.`);
+      addToast('info', 'Position Removed', `Removed ${asset?.name || 'asset'} from the practice portfolio.`);
     },
     [assets, settings.soundEnabled, addToast]
   );
@@ -1062,7 +1093,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     link.click();
     document.body.removeChild(link);
     soundManager.playSuccess(settings.soundEnabled);
-    addToast('success', 'Report Exported', 'Simulated portfolio CSV downloaded successfully.');
+    addToast('success', 'Report Exported', 'Practice portfolio summary downloaded.');
   }, [holdings, assets, totalPortfolioValue, cashBalance, settings.soundEnabled, addToast]);
 
   const value: CryptoContextType = {

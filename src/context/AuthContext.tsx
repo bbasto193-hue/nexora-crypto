@@ -7,7 +7,9 @@ import {
   registerUser,
   logoutUser,
   createPasswordResetRequest,
-  resetPasswordWithToken
+  resetPasswordWithToken,
+  updateUserProfile,
+  AuthProfileChanges
 } from '../services/authService';
 import { soundManager } from '../utils/audio';
 
@@ -19,6 +21,7 @@ interface AuthContextType {
   register: (email: string, pass: string, name: string) => Promise<{ success: boolean; error?: string }>;
   requestReset: (email: string) => Promise<{ success: boolean; token?: string; error?: string }>;
   completeReset: (email: string, token: string, pass: string) => Promise<{ success: boolean; error?: string }>;
+  updateProfile: (changes: AuthProfileChanges) => boolean;
   logout: () => void;
 }
 
@@ -91,6 +94,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return res;
   };
 
+  const updateProfile = (changes: AuthProfileChanges) => {
+    if (!user) return false;
+    const updatedUser = updateUserProfile(user.id, changes);
+    if (!updatedUser) return false;
+    setUser(updatedUser);
+    return true;
+  };
+
   const logout = () => {
     logoutUser();
     setUser(null);
@@ -107,6 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         requestReset,
         completeReset,
+        updateProfile,
         logout
       }}
     >

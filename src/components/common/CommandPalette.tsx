@@ -56,9 +56,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     { label: 'Go to Dashboard', page: 'dashboard', icon: LayoutDashboard, category: 'Navigation' },
     { label: 'Go to Portfolio & Assets', page: 'portfolio', icon: Wallet, category: 'Navigation' },
     { label: 'Explore Crypto Markets', page: 'market', icon: TrendingUp, category: 'Navigation' },
-    { label: 'Open Simulated Trading Terminal', page: 'trading', icon: BarChart2, category: 'Navigation' },
-    { label: 'Open Token Swap Simulator', page: 'swap', icon: ArrowLeftRight, category: 'Navigation' },
-    { label: 'Send & Receive Simulator', page: 'transfer', icon: SendHorizontal, category: 'Navigation' },
+    { label: 'Open Trading', page: 'trading', icon: BarChart2, category: 'Navigation' },
+    { label: 'Open Token Swap', page: 'swap', icon: ArrowLeftRight, category: 'Navigation' },
+    { label: 'Open Send & Receive', page: 'transfer', icon: SendHorizontal, category: 'Navigation' },
     { label: 'View Transaction History', page: 'history', icon: History, category: 'Navigation' },
     { label: 'Open Analytics & Reports', page: 'analytics', icon: PieChart, category: 'Navigation' },
     { label: 'Open Help Center & Academy', page: 'help', icon: Settings, category: 'Navigation' },
@@ -67,9 +67,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   const quickActions = [
     {
-      label: 'Add +$5,000 Simulated USD Cash',
+      label: 'Add +$5,000 Practice USD',
       icon: PlusCircle,
-      category: 'Simulated Actions',
+      category: 'Practice Actions',
       action: () => {
         addSimulatedCash(5000);
         onClose();
@@ -78,18 +78,18 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       label: 'Download Portfolio CSV Report',
       icon: Download,
-      category: 'Simulated Actions',
+      category: 'Practice Actions',
       action: () => {
         exportPortfolioCSV();
         onClose();
       }
     },
     {
-      label: 'Reset All Demo Balances & History',
+      label: 'Restore Initial Portfolio State',
       icon: RotateCcw,
-      category: 'Simulated Actions',
+      category: 'Practice Actions',
       action: () => {
-        if (window.confirm('Reset all simulated portfolio balances, transactions, and settings to original defaults?')) {
+        if (window.confirm('Restore practice balances, transactions, and settings to the initial portfolio state?')) {
           resetAllDemoData();
           onClose();
         }
@@ -189,7 +189,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           {filteredQuickActions.length > 0 && (
             <div>
               <div className="text-[10px] uppercase font-bold text-slate-400 px-3 py-1 tracking-wider">
-                Simulated Sandbox Operations
+                Practice Actions
               </div>
               <div className="space-y-1">
                 {filteredQuickActions.map((item, idx) => {

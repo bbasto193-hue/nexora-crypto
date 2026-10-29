@@ -19,6 +19,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { Transaction, TransactionType } from '../types/crypto';
+import { formatTransactionNote, formatTransactionStatus } from '../utils/transactionPresentation';
 
 export const HistoryPage: React.FC = () => {
   const { transactions, formatCurrency, exportPortfolioCSV, addToast } = useCrypto();
@@ -74,7 +75,7 @@ export const HistoryPage: React.FC = () => {
         <div>
           <h2 className="font-bold text-base text-white">Transaction History</h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            Audit trail of all trades, swaps, transfers, and account activity
+            Activity history for practice trades, swaps, transfers, and portfolio updates
           </p>
         </div>
 
@@ -242,7 +243,7 @@ export const HistoryPage: React.FC = () => {
                       <td className="py-4">
                         <span className="inline-flex items-center gap-1 text-[10px] font-sans font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                          <span>{tx.status}</span>
+                          <span>{formatTransactionStatus(tx.status)}</span>
                         </span>
                       </td>
 
@@ -338,7 +339,7 @@ export const HistoryPage: React.FC = () => {
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Status:</span>
-                  <span className="text-emerald-400 font-bold">{selectedTxDetail.status}</span>
+                  <span className="text-emerald-400 font-bold">{formatTransactionStatus(selectedTxDetail.status)}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Transaction Hash:</span>
@@ -372,7 +373,7 @@ export const HistoryPage: React.FC = () => {
                 )}
                 {selectedTxDetail.note && (
                   <div className="pt-2 border-t border-white/5 text-[11px] text-slate-400 font-sans">
-                    {selectedTxDetail.note}
+                    {formatTransactionNote(selectedTxDetail.note)}
                   </div>
                 )}
               </div>

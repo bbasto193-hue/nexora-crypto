@@ -60,7 +60,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
 
     if (result.success && result.token) {
       setGeneratedToken(result.token);
-      setTokenCode(result.token); // Pre-fill token for seamless demo experience
+      setTokenCode(result.token); // Pre-fill the locally generated recovery code
       setStep('reset');
     } else {
       setFormError(result.error || 'No account found with this email address.');
@@ -131,7 +131,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                         setEmail(e.target.value);
                         if (emailError) setEmailError('');
                       }}
-                      placeholder="e.g. demo@nexora.io"
+                      placeholder="Enter your account email"
                       className={`w-full bg-[#090d16] border rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white placeholder-slate-400 focus:outline-none transition-colors ${
                         emailError
                           ? 'border-rose-500/60 focus:border-rose-500'
@@ -145,7 +145,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                 </div>
 
                 <div className="p-3 rounded-lg bg-white/5 border border-white/5 text-xs text-slate-400">
-                  A security recovery token will be generated to reset your password.
+                  A recovery code will be generated in this browser to reset your password. It will not be sent by email.
                 </div>
 
                 <button
@@ -153,7 +153,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                   disabled={isSubmitting}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-950/40 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
-                  {isSubmitting ? 'Generating Recovery Token...' : 'Generate Recovery Token'}
+                  {isSubmitting ? 'Creating Recovery Code...' : 'Create Recovery Code'}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
@@ -165,14 +165,14 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
               <div>
                 <h2 className="text-lg font-bold text-white tracking-tight">Set New Password</h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Enter the recovery token and specify your new account password
+                  Enter your recovery code and choose a new account password
                 </p>
               </div>
 
               {/* Generated Token Notification Card */}
               <div className="p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-cyan-300">Generated Demo Recovery Code:</span>
+                  <span className="font-bold text-cyan-300">Your Recovery Code:</span>
                   <button
                     type="button"
                     onClick={copyToken}
@@ -186,7 +186,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                   {generatedToken}
                 </div>
                 <div className="text-[10px] text-slate-400">
-                  (Simulated authorization token active for 15 minutes)
+                  This code is generated and stored locally; it is not emailed. It expires in 15 minutes.
                 </div>
               </div>
 
@@ -200,7 +200,7 @@ export const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
               <form onSubmit={handleResetPassword} className="space-y-4">
                 <div>
                   <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
-                    Recovery Token
+                    Recovery Code
                   </label>
                   <input
                     type="text"

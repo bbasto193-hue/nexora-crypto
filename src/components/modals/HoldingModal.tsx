@@ -80,7 +80,7 @@ export const HoldingModal: React.FC<HoldingModalProps> = ({
         <div className="flex items-center justify-between p-4 border-b border-white/5">
           <div className="flex items-center gap-2">
             <span className="font-bold text-base text-white">
-              {existingHolding ? 'Edit Simulated Position' : 'Add Simulated Holding'}
+              {existingHolding ? 'Edit Practice Position' : 'Add Practice Holding'}
             </span>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
@@ -110,7 +110,7 @@ export const HoldingModal: React.FC<HoldingModalProps> = ({
           {/* Amount input */}
           <div>
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-              Simulated Quantity ({currentAsset.symbol})
+              Practice Quantity ({currentAsset.symbol})
             </label>
             <input
               type="number"
@@ -149,13 +149,13 @@ export const HoldingModal: React.FC<HoldingModalProps> = ({
           {/* Summary Preview */}
           <div className="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1 text-xs font-mono">
             <div className="flex justify-between text-slate-400">
-              <span>Simulated Valuation:</span>
+              <span>Modeled Valuation:</span>
               <span className="text-white font-semibold">
                 {formatCurrency((parseFloat(amountStr) || 0) * currentAsset.price)}
               </span>
             </div>
             <div className="flex justify-between text-slate-400">
-              <span>Simulated Total Cost:</span>
+              <span>Modeled Total Cost:</span>
               <span className="text-slate-300">
                 {formatCurrency((parseFloat(amountStr) || 0) * (parseFloat(avgPriceStr) || 0))}
               </span>
@@ -186,7 +186,7 @@ export const HoldingModal: React.FC<HoldingModalProps> = ({
               className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-950/40 flex items-center justify-center gap-1.5"
             >
               <Check className="w-4 h-4" />
-              Save Simulated Position
+              Save Practice Position
             </button>
           </div>
         </form>

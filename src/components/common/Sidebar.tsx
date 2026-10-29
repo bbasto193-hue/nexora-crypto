@@ -15,10 +15,12 @@ import {
   Shield,
   Zap,
   LogOut,
-  HelpCircle
+  HelpCircle,
+  UserCircle
 } from 'lucide-react';
 import { useCrypto } from '../../context/CryptoContext';
 import { useAuth } from '../../context/AuthContext';
+import { ProfileAvatar } from './ProfileAvatar';
 
 interface SidebarProps {
   currentPage: string;
@@ -43,13 +45,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navItems = [
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard, badge: null },
     { id: 'portfolio', label: 'Portfolio', icon: Wallet, badge: null },
-    { id: 'market', label: 'Markets', icon: TrendingUp, badge: 'LIVE' },
+    { id: 'market', label: 'Markets', icon: TrendingUp, badge: null },
     { id: 'trading', label: 'Trading', icon: BarChart2, badge: 'PRO' },
     { id: 'swap', label: 'Swap', icon: ArrowLeftRight, badge: null },
     { id: 'transfer', label: 'Send & Receive', icon: SendHorizontal, badge: null },
     { id: 'history', label: 'Transaction History', icon: History, badge: null },
     { id: 'analytics', label: 'Analytics', icon: PieChart, badge: null },
     { id: 'help', label: 'Help Center', icon: HelpCircle, badge: null },
+    { id: 'profile', label: 'My Profile', icon: UserCircle, badge: null },
     { id: 'settings', label: 'Settings', icon: Settings, badge: null }
   ];
 
@@ -180,15 +183,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
           })}
         </div>
 
-        {/* Simulated Cash Card Widget (when expanded) */}
+        {/* Practice balance card (when expanded) */}
         {!collapsed && (
           <div className="p-3 mx-3 mb-3 rounded-2xl bg-[#0f1522] border border-white/5 space-y-2">
             <div className="flex items-center justify-between text-[11px] text-slate-400">
-              <span className="font-semibold uppercase tracking-wider">Simulated Cash</span>
+              <span className="font-semibold uppercase tracking-wider">Practice Balance</span>
               <button
                 onClick={() => addSimulatedCash(2500)}
                 className="text-cyan-400 hover:text-cyan-300 flex items-center gap-0.5 font-bold"
-                title="Top-up $2,500 demo funds"
+                title="Add $2,500 in practice funds"
               >
                 <Plus className="w-3 h-3" /> $2.5K
               </button>
@@ -198,7 +201,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div className="flex items-center gap-1.5 text-[10px] text-emerald-400">
               <Shield className="w-3 h-3" />
-              <span>Available for paper trading</span>
+              <span>Illustrative funds only</span>
             </div>
           </div>
         )}
@@ -206,13 +209,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Bottom Profile / Environment Status */}
         <div className="p-3 border-t border-white/5 space-y-2">
           <div
-            onClick={() => handleNavClick('settings')}
+            onClick={() => handleNavClick('profile')}
             className={`flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors ${
               collapsed ? 'justify-center' : ''
             }`}
           >
-            <div className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center font-bold text-xs text-white shadow-md shrink-0">
-              <span>{(user?.name || settings.userName).charAt(0).toUpperCase()}</span>
+            <div className="relative shrink-0">
+              <ProfileAvatar name={user?.name || settings.userName} picture={user?.profilePictureDataUrl} className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-600 to-indigo-600 text-xs font-bold text-white shadow-md" />
               <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#0b0e14]" />
             </div>
 

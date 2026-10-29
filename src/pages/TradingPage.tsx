@@ -80,7 +80,7 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
 
     if (side === 'buy' && netTotalUSD > cashBalance) {
       setErrorMessage(
-        `Insufficient simulated cash. Required: ${formatCurrency(netTotalUSD)}, Available: ${formatCurrency(cashBalance)}`
+        `Insufficient practice balance. Required: ${formatCurrency(netTotalUSD)}, available: ${formatCurrency(cashBalance)}`
       );
       return;
     }
@@ -169,7 +169,7 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
             <div className="text-xl sm:text-2xl font-bold font-mono text-white">
               ${currentAsset.price.toLocaleString(undefined, { maximumFractionDigits: currentAsset.price > 10 ? 2 : 4 })}
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">Simulated Market Index</div>
+            <div className="text-[10px] text-slate-400 font-mono">Modeled Market Index</div>
           </div>
 
           {/* 24h Change */}
@@ -209,10 +209,10 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Sandbox Notice */}
+        {/* Practice activity disclosure */}
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold">
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Paper Trading Simulator</span>
+          <span>Practice Trading · No live orders</span>
         </div>
       </div>
 
@@ -226,7 +226,7 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
               baseValue={currentAsset.price}
               timeRange={chartTimeframe}
               onTimeRangeChange={setChartTimeframe}
-              title={`${currentAsset.symbol} / USD Simulated Price Feed`}
+              title={`${currentAsset.symbol} / USD modeled price feed`}
             />
           </div>
 
@@ -236,7 +236,7 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
             <div className="p-4 rounded-2xl bg-[#0f1523] border border-white/5 font-mono text-xs">
               <div className="flex items-center justify-between pb-2 border-b border-white/5 font-sans">
                 <span className="font-bold text-xs uppercase tracking-wider text-slate-300">
-                  Simulated Order Book
+                  Modeled Order Book
                 </span>
                 <span className="text-[10px] text-slate-400">Depth (5x5)</span>
               </div>
@@ -274,7 +274,7 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
             <div className="p-4 rounded-2xl bg-[#0f1523] border border-white/5 flex flex-col justify-between text-xs">
               <div>
                 <div className="font-bold text-xs uppercase tracking-wider text-slate-300 pb-2 border-b border-white/5">
-                  Your Simulated Position in {currentAsset.symbol}
+                  Your Practice Position in {currentAsset.symbol}
                 </div>
 
                 <div className="mt-3 space-y-2.5 font-mono">
@@ -464,7 +464,7 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
             {/* Order Cost Breakdown */}
             <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1.5 text-xs font-mono">
               <div className="flex justify-between text-slate-400">
-                <span>Simulated Units:</span>
+                <span>Practice Units:</span>
                 <span className="text-white font-semibold">
                   {amountCrypto.toFixed(amountCrypto < 1 ? 4 : 2)} {currentAsset.symbol}
                 </span>
@@ -503,7 +503,7 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
                   : 'bg-rose-500 hover:bg-rose-400 text-white shadow-rose-950/40'
               }`}
             >
-              Preview Simulated {side.toUpperCase()}
+              Preview Practice {side.toUpperCase()}
             </button>
           </div>
         </div>
@@ -523,9 +523,9 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
               </div>
               <div>
                 <h3 className="font-bold text-base text-white">
-                  Confirm Simulated {side.toUpperCase()}
+                  Confirm Practice {side.toUpperCase()}
                 </h3>
-                <p className="text-xs text-slate-400">Order verification in sandbox environment</p>
+                <p className="text-xs text-slate-400">Review the local practice order</p>
               </div>
             </div>
 
@@ -557,7 +557,7 @@ export const TradingPage: React.FC<TradingPageProps> = ({ onNavigate }) => {
             </div>
 
             <div className="text-[11px] text-slate-400">
-              This order will settle instantly and update your simulated portfolio and transaction ledger.
+              This records a practice order in your local portfolio history. No live order is submitted and no real assets are traded.
             </div>
 
             <div className="flex gap-3 pt-2">

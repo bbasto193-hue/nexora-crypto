@@ -37,7 +37,7 @@ export const TUTORIAL_CHAPTERS: TutorialChapter[] = [
     description: 'Overview of the Nexora terminal layout, primary metrics, and quick navigation actions.',
     subtitles: [
       'Welcome to Nexora Crypto — your institutional-grade cryptocurrency management suite.',
-      'The dashboard gives you real-time visibility into portfolio valuation, 24-hour return, and market trends.'
+      'The dashboard summarizes locally stored portfolio values, modeled returns, and market trends.'
     ],
     visualType: 'dashboard'
   },
@@ -45,9 +45,9 @@ export const TUTORIAL_CHAPTERS: TutorialChapter[] = [
     id: 2,
     title: 'Understanding your portfolio balance',
     durationSec: 18,
-    description: 'How simulated valuations, liquid cash reserves, and large balances are tracked.',
+    description: 'How portfolio valuations, cash reserves, and portfolio scales are presented.',
     subtitles: [
-      'Your simulated balances reflect total holdings valued against simulated market rates plus dry-powder cash.',
+      'Practice balances combine asset holdings valued at modeled prices with practice cash.',
       'Nexora supports multi-million and multi-billion institutional portfolio scales with zero rounding discrepancy.'
     ],
     visualType: 'balance'
@@ -70,7 +70,7 @@ export const TUTORIAL_CHAPTERS: TutorialChapter[] = [
     description: 'Interactive time ranges (24H to ALL), hover crosshairs, and valuation checkpoints.',
     subtitles: [
       'Portfolio charts track historical valuation curves with responsive timeframes from 24 hours to all-time.',
-      'Hover anywhere along the curve to inspect simulated price milestones and high-low boundaries.'
+      'Hover anywhere along the curve to inspect modeled price milestones and high-low boundaries.'
     ],
     visualType: 'charts'
   },
@@ -78,32 +78,32 @@ export const TUTORIAL_CHAPTERS: TutorialChapter[] = [
     id: 5,
     title: 'Using the trading interface',
     durationSec: 20,
-    description: 'Operating the simulated order terminal, live order book depth, and spread indicator.',
+    description: 'Using the practice order terminal, modeled order book depth, and spread indicator.',
     subtitles: [
-      'The trading simulator mirrors an institutional order book with real-time bids, asks, and spreads.',
-      'Switch between pairs like BTC/USD or SOL/USD to model trade executions.'
+      'The practice trading view presents illustrative bids, asks, and spreads.',
+      'Switch between pairs like BTC/USD or SOL/USD to review practice order calculations.'
     ],
     visualType: 'trading'
   },
   {
     id: 6,
-    title: 'Simulated buy and sell operations',
+    title: 'Practice buy and sell orders',
     durationSec: 18,
     description: 'Executing Market and Limit orders with balance checks and fee transparency.',
     subtitles: [
-      'Place simulated Market or Limit orders with transparent 0.15% broker fee calculations.',
-      'Orders validate against your available simulated cash and update your holdings immediately.'
+      'Review Market or Limit orders with clearly displayed 0.15% practice fee calculations.',
+      'Orders use your practice balance and update the locally stored portfolio. No live order is submitted.'
     ],
     visualType: 'orders'
   },
   {
     id: 7,
-    title: 'Using the send and receive demonstration',
+    title: 'Using Send & Receive',
     durationSec: 18,
-    description: 'Demonstrating outbound transfers and testing inbound deposit workflows with QR codes.',
+    description: 'Reviewing local transfer workflows and illustrative deposit information.',
     subtitles: [
-      'The Transfer suite allows testing outbound dispatch to cold storage and simulated recipient addresses.',
-      'Generate high-contrast deposit QR codes and simulate inbound liquidity grants.'
+      'Review practice transfer details and illustrative recipient identifiers.',
+      'Addresses and QR graphics are not verified deposit destinations. No blockchain transaction or deposit is processed.'
     ],
     visualType: 'transfer'
   },
@@ -114,7 +114,7 @@ export const TUTORIAL_CHAPTERS: TutorialChapter[] = [
     description: 'Instant automated market maker (AMM) token exchanges with slippage controls.',
     subtitles: [
       'Experience decentralized liquidity swaps between any two supported tokens.',
-      'Configure custom slippage tolerances and preview intelligent simulated routing paths.'
+      'Configure slippage tolerance and review modeled routing estimates.'
     ],
     visualType: 'swap'
   },
@@ -124,7 +124,7 @@ export const TUTORIAL_CHAPTERS: TutorialChapter[] = [
     durationSec: 16,
     description: 'Filtering, searching, and exporting complete audit receipts to CSV.',
     subtitles: [
-      'Every operation is recorded with a simulated transaction hash, fee record, and status chip.',
+      'Practice activity is recorded locally with a reference, fee estimate, and status.',
       'Filter by transaction type, search by hash, and download complete CSV audit statements.'
     ],
     visualType: 'history'
@@ -133,10 +133,10 @@ export const TUTORIAL_CHAPTERS: TutorialChapter[] = [
     id: 10,
     title: 'Managing account settings and security',
     durationSec: 17,
-    description: 'Customizing display currencies, audio haptics, demo balance resets, and replay.',
+    description: 'Customizing display currencies, audio feedback, practice balance resets, and replay.',
     subtitles: [
       'Customize your currency preferences across USD, EUR, GBP, and JPY.',
-      'You can replay this tutorial anytime from the Help Center or reset your sandbox data.'
+      'Replay this walkthrough from the Help Center or restore the initial practice portfolio state.'
     ],
     visualType: 'security'
   }
@@ -292,7 +292,7 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
               {/* Top Badge */}
               <div className="relative z-10 flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-[11px] font-mono text-cyan-300">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>NEXORA TUTORIAL SIMULATION ENGINE</span>
+                <span>NEXORA INTERACTIVE WALKTHROUGH</span>
               </div>
 
               {/* Dynamic Chapter Visual Animation */}
@@ -307,13 +307,13 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
                   {activeChapter.description}
                 </p>
 
-                {/* Simulated Visual Widget depending on chapter */}
+                {/* Practice preview widget depending on chapter */}
                 <div className="p-3.5 rounded-xl bg-white/[0.04] border border-white/10 font-mono text-xs text-left max-w-md mx-auto space-y-1.5 shadow-inner">
                   {activeChapter.visualType === 'balance' && (
                     <div className="space-y-1">
-                      <div className="text-[10px] text-slate-400">SIMULATED PORTFOLIO VALUATION</div>
+                      <div className="text-[10px] text-slate-400">ILLUSTRATIVE PORTFOLIO VALUE</div>
                       <div className="text-lg font-bold text-emerald-400">$85,000,000.00 USD</div>
-                      <div className="text-[10px] text-slate-400">Institutional Tier • 0% Slippage Delta</div>
+                      <div className="text-[10px] text-slate-400">Institutional practice scale</div>
                     </div>
                   )}
                   {activeChapter.visualType === 'trading' && (
@@ -331,16 +331,16 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
                     <div className="space-y-1">
                       <div className="text-[10px] text-slate-400">SMART LIQUIDITY ROUTING</div>
                       <div className="text-xs text-white">ETH (1.50) → NEXORA POOL → SOL (29.82)</div>
-                      <div className="text-[10px] text-purple-400">DEX Fee: 0.2% • Guaranteed Fill</div>
+                      <div className="text-[10px] text-purple-400">Illustrative fee estimate: 0.2%</div>
                     </div>
                   )}
                   {activeChapter.visualType !== 'balance' &&
                     activeChapter.visualType !== 'trading' &&
                     activeChapter.visualType !== 'swap' && (
                       <div className="space-y-1">
-                        <div className="text-[10px] text-slate-400">SYSTEM ARCHITECTURE</div>
-                        <div className="text-xs text-cyan-300">Nexora Institutional Sandbox v2.4</div>
-                        <div className="text-[10px] text-slate-400">Zero real blockchain transactions involved</div>
+                        <div className="text-[10px] text-slate-400">PRACTICE WORKSPACE</div>
+                        <div className="text-xs text-cyan-300">NEXORA Portfolio Tools</div>
+                        <div className="text-[10px] text-slate-400">No live orders or blockchain transactions are submitted</div>
                       </div>
                     )}
                 </div>

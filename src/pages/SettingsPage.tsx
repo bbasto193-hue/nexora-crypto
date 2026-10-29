@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useCrypto, PORTFOLIO_TIER_CONFIG, PortfolioTier } from '../context/CryptoContext';
 import { useAuth } from '../context/AuthContext';
+import { SUBSCRIPTION_DURATION_DAYS, SUBSCRIPTION_PLANS } from '../services/subscriptionPlans';
 import {
   User,
   Sliders,
@@ -29,7 +30,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
-const SUBSCRIPTION_DURATION_MS = 34 * 24 * 60 * 60 * 1000;
+const SUBSCRIPTION_DURATION_MS = SUBSCRIPTION_DURATION_DAYS * 24 * 60 * 60 * 1000;
 const SUPPORT_EMAIL = 'alphaprimealphaprime5@gmail.com';
 
 const formatPlanUsd = (amount: number) =>
@@ -47,12 +48,6 @@ const formatCountdown = (milliseconds: number) => {
   const seconds = totalSeconds % 60;
   return { days, hours, minutes, seconds };
 };
-
-const SUBSCRIPTION_PLANS = [
-  { id: 1, price: 5_200, dailyCredit: 100_000, totalCredits: 3_400_000 },
-  { id: 2, price: 7_200, dailyCredit: 120_000, totalCredits: 4_080_000 },
-  { id: 3, price: 12_000, dailyCredit: 220_000, totalCredits: 7_480_000 }
-] as const;
 
 interface SettingsPageProps {
   onOpenTutorial?: () => void;
@@ -77,7 +72,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
     subscriptionState,
     activateSubscription
   } = useCrypto();
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
 
   const [userName, setUserName] = useState(user?.name || settings.userName);
   const [userEmail, setUserEmail] = useState(user?.email || settings.userEmail);
@@ -99,13 +94,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
     const currentPlan = SUBSCRIPTION_PLANS.find((plan) => plan.id === subscriptionState.activePlanId);
     if (subscriptionState.activatedAt !== null) {
       const currentPlanLabel = currentPlan ? `Plan ${currentPlan.id}` : 'the current plan';
-      if (!window.confirm(`Start Plan ${planId} from day zero? The current ${currentPlanLabel} balance and counter will reset. Previous simulated credit entries remain in the history. This does not change wallet or transaction data.`)) {
+      if (!window.confirm(`Restart Plan ${planId} from day one? The current ${currentPlanLabel} practice balance and counter will reset. Earlier illustrative credit entries remain in the schedule history. Wallet and transaction data will not change.`)) {
         return;
       }
     }
 
     if (activateSubscription(planId)) {
-      addToast('success', `Plan ${planId} Demo Activated`, 'The 34-day simulated credit schedule has restarted from day zero. Previous entries remain archived in subscription history.');
+      addToast('success', `Plan ${planId} practice schedule started`, 'The 34-day illustrative credit schedule has restarted. Earlier entries remain in the schedule history.');
     } else {
       addToast('error', 'Activation Not Saved', 'The subscription activation could not be saved. Please try again.');
     }
@@ -123,11 +118,21 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    updateSettings({ userName, userEmail });
-    addToast('success', 'Profile Updated', 'User preferences saved successfully.');
+    const saved = updateProfile({
+      name: userName,
+      email: userEmail,
+      username: user?.username,
+      profilePictureDataUrl: user?.profilePictureDataUrl
+    });
+    if (!saved) {
+      addToast('error', 'Profile Not Saved', 'Check that your name and email are valid and that the email is not already in use.');
+      return;
+    }
+    updateSettings({ userName: userName.trim(), userEmail: userEmail.trim().toLowerCase() });
+    addToast('success', 'Profile Updated', 'Your personal account profile was saved in this browser.');
   };
 
-  const handleApplyDemoGrant = () => {
+  const handleAddPracticeFunds = () => {
     const val = parseFloat(customGrantStr);
     if (!isNaN(val) && val > 0) {
       addSimulatedCash(val);
@@ -138,21 +143,21 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Settings Header */}
       <div className="p-4 rounded-2xl bg-[#0f1523] border border-white/5">
-        <h2 className="font-bold text-base text-white">Platform Settings & Simulation Preferences</h2>
+        <h2 className="font-bold text-base text-white">Account Settings & Preferences</h2>
         <p className="text-xs text-slate-400 mt-0.5">
-          Customize currency display, portfolio scale tiers, audio haptics, tutorial replay, and security parameters
+          Customize reporting currency, portfolio scale, audio feedback, walkthrough, and account preferences
         </p>
       </div>
 
-      {/* Simulated subscription plans; credits are isolated from portfolio funds */}
+      {/* Practice subscription schedules; credits are isolated from portfolio funds */}
       <section className="space-y-5" aria-labelledby="subscription-plans-title">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-cyan-300">
-              <ShieldCheck className="h-3.5 w-3.5" /> Demo simulation only
+              <ShieldCheck className="h-3.5 w-3.5" /> Practice schedule
             </div>
             <h3 id="subscription-plans-title" className="text-lg font-bold text-white">Subscription Plans</h3>
-            <p className="mt-1 text-xs text-slate-400">Simulated credits are held in a separate demo balance and are not wallet funds.</p>
+            <p className="mt-1 text-xs text-slate-400">Illustrative credits are tracked separately and are not wallet funds. No payment is verified or processed here.</p>
           </div>
           {subscriptionState.activatedAt !== null && subscriptionCountdown && (
             <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.07] px-3.5 py-2.5 text-xs text-emerald-200" aria-live="polite">
@@ -173,32 +178,32 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Plan {plan.id}</p>
-                    <h4 className="mt-1 text-sm font-semibold text-white">Plan {plan.id} Demo Subscription</h4>
+                    <h4 className="mt-1 text-sm font-semibold text-white">Plan {plan.id} practice schedule</h4>
                   </div>
                   <span className={`rounded-full border px-2 py-1 text-[9px] font-bold uppercase tracking-wide ${isActive ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-cyan-500/25 bg-cyan-500/10 text-cyan-300'}`}>
-                    {isActive ? 'Active' : 'Available'}
+                    {isActive ? 'Schedule running' : 'Available'}
                   </span>
                 </div>
 
                 <div className="mt-5">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Plan price · simulated</p>
-                  <p className="mt-1 font-mono text-3xl font-bold tracking-tight text-white">{formatPlanUsd(plan.price)}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Configured plan price</p>
+                  <p className="mt-1 font-mono text-3xl font-bold tracking-tight text-white">{formatPlanUsd(plan.priceUsd)}</p>
                 </div>
 
                 <div className="my-5 rounded-xl border border-cyan-500/15 bg-[#090e18]/75 p-3.5">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Daily simulated credit</p>
-                  <p className="mt-1 font-mono text-2xl font-bold tracking-tight text-cyan-300">{formatPlanUsd(plan.dailyCredit)}</p>
-                  <p className="mt-1 text-[10px] text-slate-500">Demo credit only · not real funds</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Illustrative daily credit</p>
+                  <p className="mt-1 font-mono text-2xl font-bold tracking-tight text-cyan-300">{formatPlanUsd(plan.dailyCreditUsd)}</p>
+                  <p className="mt-1 text-[10px] text-slate-500">Illustrative schedule · not funds</p>
                 </div>
 
                 <dl className="mb-5 space-y-3 text-xs">
                   <div className="flex items-center justify-between gap-3 text-slate-400">
                     <dt className="flex items-center gap-2"><CalendarDays className="h-3.5 w-3.5 text-slate-500" />Duration</dt>
-                    <dd className="font-semibold text-slate-200">34 days</dd>
+                    <dd className="font-semibold text-slate-200">{SUBSCRIPTION_DURATION_DAYS} days</dd>
                   </div>
                   <div className="flex items-center justify-between gap-3 text-slate-400">
-                    <dt className="flex items-center gap-2"><CircleDollarSign className="h-3.5 w-3.5 text-slate-500" />Total simulated credits</dt>
-                    <dd className="font-mono font-bold text-white">{formatPlanUsd(plan.totalCredits)}</dd>
+                    <dt className="flex items-center gap-2"><CircleDollarSign className="h-3.5 w-3.5 text-slate-500" />Total illustrative credits</dt>
+                    <dd className="font-mono font-bold text-white">{formatPlanUsd(plan.totalCreditUsd)}</dd>
                   </div>
                 </dl>
 
@@ -207,7 +212,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   onClick={() => handleActivatePlan(plan.id)}
                   className="mt-auto inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-cyan-950/30 transition hover:from-cyan-400 hover:to-blue-500"
                 >
-                  {isActive ? <><CheckCircle2 className="h-4 w-4" /> Restart Plan {plan.id}</> : `Activate Plan ${plan.id} Demo`}
+                  {isActive ? <><CheckCircle2 className="h-4 w-4" /> Restart schedule</> : `Start practice schedule`}
                 </button>
               </article>
             );
@@ -218,20 +223,20 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           <div className="rounded-2xl border border-white/10 bg-[#0f1523] p-5 shadow-xl">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h4 className="text-sm font-bold text-white">Plan {subscriptionState.activePlanId} simulated trial balance</h4>
-                <p className="mt-1 text-[11px] text-slate-400">Separate from portfolio cash, holdings, wallet actions, and trading history.</p>
+                <h4 className="text-sm font-bold text-white">Plan {subscriptionState.activePlanId} illustrative schedule balance</h4>
+                <p className="mt-1 text-[11px] text-slate-400">Practice-only figures, separate from portfolio cash, holdings, wallet actions, and trading history.</p>
               </div>
               <div className="font-mono text-2xl font-bold text-emerald-300">{formatPlanUsd(subscriptionState.simulatedBalance)}</div>
             </div>
             <div className="mt-4 border-t border-white/5 pt-4">
               <h5 className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Subscription credit history</h5>
               {subscriptionState.history.length === 0 ? (
-                <p className="text-xs text-slate-500">The first simulated credit is scheduled 24 hours after activation.</p>
+                <p className="text-xs text-slate-500">The first illustrative credit is scheduled 24 hours after the practice schedule starts.</p>
               ) : (
                 <ul className="space-y-2">
                   {subscriptionState.history.slice(0, 5).map((entry) => (
                     <li key={entry.id} className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                      <span className="text-slate-300">Plan {entry.planId} · Day {entry.day} · Simulated credit</span>
+                      <span className="text-slate-300">Plan {entry.planId} · Day {entry.day} · Illustrative credit</span>
                       <span className="flex items-center gap-3">
                         <time className="text-slate-500" dateTime={new Date(entry.creditedAt).toISOString()}>{new Date(entry.creditedAt).toLocaleString()}</time>
                         <strong className="font-mono text-emerald-300">+{formatPlanUsd(entry.amount)}</strong>
@@ -356,7 +361,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           </div>
           <div>
             <h3 className="font-bold text-sm text-white">Profile & Identity</h3>
-            <p className="text-xs text-slate-400">Your simulated institutional account profile</p>
+            <p className="text-xs text-slate-400">Your personal account profile</p>
           </div>
         </div>
 
@@ -495,7 +500,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
               <div>
                 <div className="text-xs font-semibold text-white">Web Audio Interaction Feedback</div>
                 <div className="text-[11px] text-slate-400">
-                  Subtle synthesized audio cues when executing simulated trades and swaps
+                  Subtle audio cues during practice trades and swaps
                 </div>
               </div>
               <button
@@ -512,24 +517,24 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         </div>
       </div>
 
-      {/* Simulated Demo Grants & Reset */}
+      {/* Practice funds and reset controls */}
       <div className="p-6 rounded-3xl bg-[#0f1523] border border-white/5 shadow-xl space-y-5">
         <div className="flex items-center gap-3 pb-3 border-b border-white/5">
           <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400">
             <Zap className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-bold text-sm text-white">Sandbox Funding & Reset</h3>
-            <p className="text-xs text-slate-400">Grant test funds or restore initial clean slate</p>
+            <h3 className="font-bold text-sm text-white">Practice Funds & Reset</h3>
+            <p className="text-xs text-slate-400">Add illustrative funds or restore the initial portfolio state</p>
           </div>
         </div>
 
         <div className="space-y-4">
           {/* Custom Cash Grant */}
           <div className="p-4 rounded-xl bg-[#0a0e17] border border-white/5 space-y-2">
-            <div className="text-xs font-bold text-white">Inject Custom Simulated Capital</div>
+            <div className="text-xs font-bold text-white">Add Practice Funds</div>
             <div className="text-[11px] text-slate-400">
-              Add mock liquidity to practice high-volume trade sizing
+              Add illustrative liquidity to explore larger order sizes
             </div>
 
             <div className="flex items-center gap-3 pt-1">
@@ -545,10 +550,10 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
               <button
                 type="button"
-                onClick={handleApplyDemoGrant}
+                onClick={handleAddPracticeFunds}
                 className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition-colors shadow-md shadow-emerald-950/40 cursor-pointer"
               >
-                Grant Demo USD
+                Add Practice USD
               </button>
             </div>
           </div>
@@ -556,9 +561,9 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           {/* Reset All Data Button */}
           <div className="flex items-center justify-between p-4 rounded-xl bg-rose-500/10 border border-rose-500/20">
             <div>
-              <div className="text-xs font-bold text-rose-300">Reset Demo Data to Original Defaults</div>
+              <div className="text-xs font-bold text-rose-300">Restore Initial Portfolio State</div>
               <div className="text-[11px] text-slate-400 mt-0.5">
-                Restores original portfolio holdings, subscription demo state, initial starter balances, and default transaction logs.
+                Restores the initial holdings, practice schedule, starting balances, and transaction history.
               </div>
             </div>
 
@@ -584,12 +589,12 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
               </div>
               <div>
                 <h3 className="font-bold text-base text-white">Confirm Reset</h3>
-                <p className="text-xs text-slate-400">Restore factory demonstration data</p>
+                <p className="text-xs text-slate-400">Restore the initial portfolio state</p>
               </div>
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed">
-              This action will reset your simulated balances, holdings, and transaction history back to the original portfolio state. Are you sure you want to proceed?
+              This action will reset your practice balances, holdings, and transaction history to the initial portfolio state. Are you sure you want to proceed?
             </p>
 
             <div className="flex gap-3 pt-2">

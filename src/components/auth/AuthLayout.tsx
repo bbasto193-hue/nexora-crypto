@@ -8,17 +8,35 @@ interface AuthLayoutProps {
 
 const ReferenceCode: React.FC = () => (
   <div className="auth-code-panel" aria-label="Binance QR code from the NOVEXA reference">
-    <div className="auth-code-copy">
-      <span className="auth-code-brand">
+    <div className="auth-code-topbar">
+      <span className="auth-code-brand" aria-label="Binance">
         <svg className="auth-code-brand-mark" viewBox="0 0 24 24" aria-hidden="true">
           <path d="m12 1.5 3.2 3.2L12 7.9 8.8 4.7 12 1.5ZM4.7 8.8 7.9 12l-3.2 3.2L1.5 12l3.2-3.2ZM19.3 8.8l3.2 3.2-3.2 3.2-3.2-3.2 3.2-3.2ZM12 16.1l3.2 3.2-3.2 3.2-3.2-3.2 3.2-3.2ZM12 8.4l3.6 3.6-3.6 3.6L8.4 12 12 8.4Z" fill="currentColor" />
         </svg>
         BINANCE
       </span>
-      <span className="auth-code-caption">Scan QR</span>
     </div>
-    <span className="auth-code-divider" aria-hidden="true" />
-    <img className="auth-code-art" src="/assets/novexa-binance-qr.png" alt="Original Binance QR code" />
+
+    <div className="auth-code-copy" dir="rtl">
+      <span className="auth-code-title">اسمك باستخدام تطبيق Binance للدفع</span>
+    </div>
+
+    <div className="auth-code-qr-shell">
+      <img className="auth-code-art" src="/assets/novexa-binance-qr.png" alt="Binance QR code for payment" />
+    </div>
+
+    <div className="auth-code-name" aria-label="Pay to Hichem Gambetta">Hichem Gambetta</div>
+
+    <div className="auth-code-footer" dir="rtl">
+      <div className="auth-code-pay-copy">
+        <span className="auth-code-pay-label">ادفع في أي مكان</span>
+        <span className="auth-code-pay-sub">قم بتحميل تطبيق Binance</span>
+      </div>
+
+      <div className="auth-code-app-qr" aria-label="Download Binance app">
+        <img src="/assets/novexa-binance-qr.png" alt="Binance app QR" />
+      </div>
+    </div>
   </div>
 );
 
